@@ -22,9 +22,8 @@ public class Elevator {
 	public void autoDrop() {
 		elevator.setSetpoint(0.0);
 	}
-
-	public void autoTote1() {
-		elevator.setSetpoint(1.0);
+	public void autoLift(){
+		elevator.setSetpoint(2.3);
 	}
 
 	public void robotInit() {
@@ -38,19 +37,8 @@ public class Elevator {
 			elevator.setSetpoint(0.0);
 		}
 		if (joystickElevator.getRawButton(2) == true) {
-			elevator.setSetpoint(2.0);
-		}
-		if (joystickElevator.getRawButton(3) == true) {
-			elevator.setSetpoint(4.0);
-		}
-		if (joystickElevator.getRawButton(4) == true) {
-			elevator.setSetpoint(6.0);
-		}
-		if (joystickElevator.getRawButton(5) == true) {
-			elevator.setSetpoint(8.0);
-		}
-		if (joystickElevator.getRawButton(6) == true) {
 			elevator.setSetpoint(10.0);
+
 		}
 	}
 }

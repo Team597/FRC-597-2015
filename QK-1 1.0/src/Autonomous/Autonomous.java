@@ -62,13 +62,13 @@ public class Autonomous {
 		}
 		if (autonomous == 1) {
 
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(3); // moves forward to get mobility bonus
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
+			Timer.delay(1); // moves forward to get mobility bonus
 
-			talonLeft.set(0);
-			talonRight.set(0);
-			Timer.delay(.1); // stops movement
+			robotDriveOmni.leftMotor(0);
+			robotDriveOmni.rightMotor(0);
+			Timer.delay(.1);
 
 		}
 		if (autonomous == 2) {
@@ -77,15 +77,15 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kReverse);
 			Timer.delay(.3); // closes claw may be used on totes and containers
 
-			autoElevator.autoTote(); // lifts elevator
+			autoElevator.autoLift(); // lifts elevator
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(1); // moves forward to get mobility bonus
 
-			talonLeft.set(0);
-			talonRight.set(0);
-			Timer.delay(.1); // stops movement
+			robotDriveOmni.leftMotor(0);
+			robotDriveOmni.rightMotor(0);
+			Timer.delay(.1);
 		}
 		if (autonomous == 3) {
 
@@ -93,11 +93,11 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kReverse);
 			Timer.delay(.3); // closes claw on the tote
 
-			talonLeft.set(-1);
-			talonRight.set(-1);
+			robotDriveOmni.leftMotor(-1);
+			robotDriveOmni.rightMotor(-1);
 			Timer.delay(1); // moves back
 
-			autoElevator.autoTote(); // lifts tote = position 1
+			autoElevator.autoLift(); // lifts toe
 
 			omniTalon.set(-1);
 			Timer.delay(2); // moves left
@@ -106,8 +106,8 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kForward);
 			Timer.delay(.3); // opens claw
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(1); // moves forward into tote
 
 			autoElevator.autoDrop(); // lowers claw
@@ -116,23 +116,23 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kReverse);
 			Timer.delay(.3); // closes claw on tote
 
-			autoElevator.autoTote(); // lifts tote
+			autoElevator.autoLift(); // lifts tote
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(4); // moves forward to get mobility bonus
 		}
 		if (autonomous == 4) {
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); // closes claw on the tote
+			Timer.delay(.3); //closes claw on the tote
 
-			talonLeft.set(-1);
-			talonRight.set(-1);
-			Timer.delay(1); // moves back
+			robotDriveOmni.leftMotor(-1);
+			robotDriveOmni.rightMotor(-1);
+			Timer.delay(1); //moves back
 
-			autoElevator.autoTote(); // lifts tote
+			autoElevator.autoLift(); // lifts toe
 
 			omniTalon.set(1);
 			Timer.delay(2); // moves right
@@ -141,20 +141,20 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kForward);
 			Timer.delay(.3); // opens claw
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(1); // moves forward into tote
 
-			autoElevator.autoDrop(); // lowers claw
+			autoElevator.autoDrop(); //lowers claw
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
 			Timer.delay(.3); // closes claw on tote
 
-			autoElevator.autoTote(); // lifts tote
+			autoElevator.autoLift(); //lifts tote
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(4);// moves forward to get mobility bonus
 
 		}
@@ -162,13 +162,13 @@ public class Autonomous {
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); // closes claw on the tote
+			Timer.delay(.3); //closes claw on the tote
 
-			talonLeft.set(-1);
-			talonRight.set(-1);
+			robotDriveOmni.leftMotor(-1);
+			robotDriveOmni.rightMotor(-1);
 			Timer.delay(1); // moves back
 
-			autoElevator.autoTote(); // lifts tote
+			autoElevator.autoLift(); // lifts tote
 
 			omniTalon.set(-1);
 			Timer.delay(2); // moves left
@@ -177,117 +177,86 @@ public class Autonomous {
 			solenoidClawRight.set(Value.kForward);
 			Timer.delay(.3); // opens claw
 
-			talonLeft.set(1);
-			talonRight.set(1);
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(1); // moves forward into tote
-
-			autoElevator.autoDrop(); // lowers elevator
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); // closes claw
-
-			autoElevator.autoTote(); // lifts tote
-
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(1.5); // moves forward
-
+			Timer.delay(.3); //
+			
+			autoElevator.autoLift();
+			
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
+			Timer.delay(1.5);
+			
 			omniTalon.set(-1);
-			Timer.delay(1); // moves left to avoid the bump
-
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(2.5); // moves forward to get mobility bonus
+			Timer.delay(1);
+			
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
+			Timer.delay(2.5);
 		}
 		if (autonomous == 6) {
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); // closes claw
+			Timer.delay(.3);
 
-			talonLeft.set(-1);
-			talonRight.set(-1);
-			Timer.delay(1); // moves back
+			autoElevator.autoLift();
 
-			autoElevator.autoTote(); // lifts tote
+			robotDriveOmni.leftMotor(-1);
+			robotDriveOmni.rightMotor(-1);
+			Timer.delay(1);
 
 			omniTalon.set(-1);
-			Timer.delay(2); //moves left
+			Timer.delay(2);
 
 			solenoidClawLeft.set(Value.kForward);
 			solenoidClawRight.set(Value.kForward);
-			Timer.delay(.3); // opens claw 
+			Timer.delay(.3);
 
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(1); // moves forward
-
-			autoElevator.autoDrop(); // lowers elevator
-
-			solenoidClawLeft.set(Value.kReverse);
-			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); //closes claw
-
-			talonLeft.set(-1);
-			talonRight.set(-1);
-			Timer.delay(1); // moves back
-
-			autoElevator.autoTote(); // lifts tote
-
-			omniTalon.set(-1);
-			Timer.delay(2); // moves left
-
-			solenoidClawLeft.set(Value.kForward);
-			solenoidClawRight.set(Value.kForward);
-			Timer.delay(.3); //opens claw
-
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(1); // moves forward
-
-			autoElevator.autoDrop(); // lowers elevator
-
-			solenoidClawLeft.set(Value.kReverse);
-			solenoidClawRight.set(Value.kReverse);
-			Timer.delay(.3); // closes claw
-
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(2); // moves forward 
-			
-			autoElevator.autoTote(); // lifts tote
-
-			talonLeft.set(1);
-			talonRight.set(1);
-			Timer.delay(2); //moves forward for mobility bonus
-
-		}
-		if (autonomous == 7) {
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
+			Timer.delay(1);
 
 			solenoidClawLeft.set(Value.kReverse);
 			solenoidClawRight.set(Value.kReverse);
 			Timer.delay(.3);
-						
-			talonLeft.set(-1);
-			talonRight.set(-1);
+
+			autoElevator.autoDrop();
+			autoElevator.autoLift();
+
+			robotDriveOmni.leftMotor(-1);
+			robotDriveOmni.rightMotor(-1);
 			Timer.delay(1);
-			
-			autoElevator.autoContainer(); 
-			
-			omniTalon.set(1);
-			Timer.delay(1);
-			
+
+			omniTalon.set(-1);
+			Timer.delay(2);
+
 			solenoidClawLeft.set(Value.kForward);
 			solenoidClawRight.set(Value.kForward);
-			
-			talonLeft.set(1);
-			talonRight.set(1);
+			Timer.delay(.3);
+
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
 			Timer.delay(1);
-			
-			
-			
-			
+
+			solenoidClawLeft.set(Value.kReverse);
+			solenoidClawRight.set(Value.kReverse);
+			Timer.delay(.3);
+
+			autoElevator.autoDrop();
+			autoElevator.autoLift();
+
+			robotDriveOmni.leftMotor(1);
+			robotDriveOmni.rightMotor(1);
+			Timer.delay(4);
+
+		}
+		if (autonomous == 7) {
+
 		}
 		if (autonomous == 8) {
 
