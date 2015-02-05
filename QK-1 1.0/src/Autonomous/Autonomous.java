@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Autonomous {
+	//Hector sucks ass
 	//Import stuff for drive class
 	Joystick joystickLeft;
 	Joystick joystickRight;
