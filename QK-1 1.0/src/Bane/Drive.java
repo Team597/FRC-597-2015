@@ -75,12 +75,5 @@ public class Drive {
 
 	}
 	
-	//voids for autonomous
-	public void leftMotor(double input) {
-		talonLeft.set(input);
-	}
-	public void rightMotor(double input) {
-		talonRight.set(input);
-	}
 	
 }
