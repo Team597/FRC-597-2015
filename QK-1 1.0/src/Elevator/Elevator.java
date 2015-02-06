@@ -38,7 +38,14 @@ public class Elevator {
 			elevator.setSetpoint(0.0);
 		}
 		if (joystickElevator.getRawButton(2) == true) {
-			elevator.setSetpoint(10.0);
+			elevator.setSetpoint(3.0);
+
+		}
+		if (joystickElevator.getRawButton(3) == true) {
+			elevator.setSetpoint(5.0);
+		}
+		if (joystickElevator.getRawButton(4) == true) {
+			elevator.setSetpoint(6.0);
 
 		}
 	}
