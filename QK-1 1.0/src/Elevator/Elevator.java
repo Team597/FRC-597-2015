@@ -20,6 +20,7 @@ public class Elevator {
 	}
 
 	public void autoDrop() {
+		
 		elevator.setSetpoint(0.0);
 	}
 	public void autoLift(){
