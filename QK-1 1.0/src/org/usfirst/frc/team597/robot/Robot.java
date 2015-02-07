@@ -23,6 +23,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	
+	Joystick xboxGamepad;
 	Joystick joystickLeft;
 	Joystick joystickRight;
 	Talon talonLeft;
@@ -42,6 +43,7 @@ public class Robot extends IterativeRobot {
 	
 
 	public Robot() {
+		xboxGamepad = new Joystick(2);
 		joystickLeft = new Joystick(0);
 		joystickRight = new Joystick(1);
 		talonLeft = new Talon(0);
