@@ -62,16 +62,16 @@ public class Elevator {
 
 	public void teleopPeriodic() {
 
-		if (joystickElevator.getRawButton(1) == true) {
+		if (joystickElevator.getRawButton(2) == true) {
 			elevator.setSetpoint(0.0); // sets pid to move to base position
 		}
-		if (joystickElevator.getRawButton(2) == true) {
+		if (joystickElevator.getRawButton(3) == true) {
 			elevator.setSetpoint(3.0); // sets pid to move to tote 1 position
 		}
-		if (joystickElevator.getRawButton(3) == true) {
+		if (joystickElevator.getRawButton(4) == true) {
 			elevator.setSetpoint(5.0); // sets pid to move to tote 2 position
 		}
-		if (joystickElevator.getRawButton(4) == true) {
+		if (joystickElevator.getRawButton(1) == true) {
 			elevator.setSetpoint(7.0); // sets pid to move to tote 3 position
 
 		}
