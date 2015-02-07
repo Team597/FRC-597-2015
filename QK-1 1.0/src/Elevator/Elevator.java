@@ -115,6 +115,10 @@ public class Elevator {
 		if (System.currentTimeMillis() >= elevatorprint){
     		System.out.println("top switch: "+ topSwitch.get());
     		System.out.println("bot switch: "+ botSwitch.get());
+    		System.out.println("Elevator encoder: "+ encoderElevator.get());
+    		System.out.println(" Elevator" + elevator.get());
+    		
+    		elevatorprint += 1000;
 		}
 	}
 }
