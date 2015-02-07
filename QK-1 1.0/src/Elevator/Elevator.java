@@ -32,7 +32,6 @@ public class Elevator {
 	double HEIGHT_TOTEFOUR = 9.0;
 	double HEIGHT_TOP = 11.0;
 	
-
 	public Elevator() {
 		talonElevator = new Talon(3);
 		xboxGamepad = new Joystick(3);
@@ -45,7 +44,6 @@ public class Elevator {
 	}
 
 	public void autoDrop() {
-
 		elevator.setSetpoint(HEIGHT_BOTTOM); // lowers elevator for autonomous
 	}
 
@@ -56,8 +54,8 @@ public class Elevator {
 	public void robotInit() {
 
 		elevatorState = 1; // elevator state is set to 1
-		if (elevatorState == 1) { 
-			if (botSwitch.get() == false) { 
+		if (elevatorState == 1) {
+			if (botSwitch.get() == false) {
 				talonElevator.set(ELEVATORTALON_BOTSWITCH_FALSE);// if switch state is 1 and bot switch is not true lowers elevator
 			}
 			if (botSwitch.get() == true) {
