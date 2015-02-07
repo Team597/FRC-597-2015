@@ -89,7 +89,6 @@ public class Robot extends IterativeRobot {
     		System.out.println("talon Left: "+ talonLeft.get());
     		System.out.println("talon Right: "+ talonRight.get());
     		System.out.println("talon omni: "+ omniTalon.get());
-    		
     		lastPrint += 1000;
     	}
 		

@@ -17,6 +17,7 @@ public class Elevator {
 	DigitalInput topSwitch;
 	DigitalInput botSwitch;
 	DoubleSolenoid brake;
+	long elevatorprint = System.currentTimeMillis();
 	
 	int elevatorState = 1;
 
@@ -103,5 +104,9 @@ public class Elevator {
 			elevator.enable(); // when the conditions are not met enables the PID Controller
 		}
 		
+		if (System.currentTimeMillis() >= elevatorprint){
+    		System.out.println("top switch: "+ topSwitch.get());
+    		System.out.println("bot switch: "+ botSwitch.get());
+		}
 	}
 }
