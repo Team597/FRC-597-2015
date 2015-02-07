@@ -23,6 +23,7 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
+	long lastPrint = System.currentTimeMillis();
 	
 	Joystick xboxGamepad;
 	Joystick joystickLeft;
@@ -81,7 +82,10 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 		//testing code for xboxGamepad
-		buttonPressed = xboxGamepad.getRawButton(1);
+		if(System.currentTimeMillis() >= lastPrint){
+    		System.out.println("Button 1  = " + xboxGamepad.getRawButton(1));
+    		lastPrint += 1000;
+    	}
 		
 		
 		robotDriveOmni.teleopPeriodic();
