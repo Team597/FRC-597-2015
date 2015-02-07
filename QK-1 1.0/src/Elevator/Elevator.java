@@ -1,9 +1,11 @@
 package Elevator;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Elevator {
 
@@ -11,25 +13,50 @@ public class Elevator {
 	Encoder encoderElevator;
 	PIDController elevator;
 	Joystick joystickElevator;
+	DigitalInput topSwitch;
+	DigitalInput botSwitch
+	
+	int elevatorState = 1;
 
 	public Elevator() {
 		talonElevator = new Talon(3);
 		joystickElevator = new Joystick(3);
 		encoderElevator = new Encoder(0, 1);
+		topSwitch = new DigitalInput(2);
+		botSwitch = new DigitalInput(3);
+		
 		elevator = new PIDController(0, 0, 0.1, encoderElevator, talonElevator);
 	}
 
 	public void autoDrop() {
-		
-		elevator.setSetpoint(0.0);
+
+		elevator.setSetpoint(0.0); // lowers elevator for autonomous
 	}
-	public void autoLift(){
-		elevator.setSetpoint(2.3);
+
+	public void autoLift() {
+		elevator.setSetpoint(2.3); // lifts elevator for autonomous
 	}
 
 	public void robotInit() {
 
-		elevator.enable();
+		if (elevatorState == 1) {
+			if ( botSwitch.get() == false) {
+				talonElevator.set(-0.75);
+			}
+			if ( botSwitch.get() == true) {
+				talonElevator.set(0);
+				
+				talonElevator.set(0.2);
+				Timer.delay(0.5);
+				 
+				encoderElevator.reset();
+				elevatorState = 2;
+			}
+
+		}
+		if (elevatorState == 2) {
+			elevator.enable();
+		}
 	}
 
 	public void teleopPeriodic() {
@@ -39,7 +66,6 @@ public class Elevator {
 		}
 		if (joystickElevator.getRawButton(2) == true) {
 			elevator.setSetpoint(3.0); // sets pid to move to tote 1 position
-
 		}
 		if (joystickElevator.getRawButton(3) == true) {
 			elevator.setSetpoint(5.0); // sets pid to move to tote 2 position
@@ -55,6 +81,21 @@ public class Elevator {
 			elevator.setSetpoint(11.0); // sets pid to move to top position
 
 		}
-		
+
 	}
+		if(topSwitch.get() == true){
+			elevator.setSetpoint(9.0); // if top switch is pressed lowers elevator
+		}
+		if(botSwitch.get() == true){
+			elevator.setSetpoint(3.0); // if bot switch is pressed lifts elevator
+		}
+		
+		if(joystickElevator.getRawButton(7) == true && botSwitch.get() == false && topSwitch.get() == false){
+			elevator.disable(); // if button 7 is pressed and no switches are being pressed it changes to manual control
+			talonElevator.set(joystickElevator.getY());
+		}
+		else{
+			elevator.enable(); // when the conditions are not met enables the PID Controller
+		}
+		
 }
