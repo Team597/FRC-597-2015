@@ -20,6 +20,7 @@ public class Autonomous {
 	// Import stuff for claw class
 	DoubleSolenoid solenoidClawLeft;
 	DoubleSolenoid solenoidClawRight;
+	long autonomousPrint = System.currentTimeMillis();
 
 	Drive robotDriveOmni;
 	Claw robotClaw;
@@ -55,6 +56,8 @@ public class Autonomous {
 
 	public void autonomous() {
 
+		autonomousPrint += 1000;
+		
 		if (autonomous == 0) { // does nothing
 
 		}
@@ -260,6 +263,9 @@ public class Autonomous {
 
 		}
 
+		if(System.currentTimeMillis() >= autonomousPrint){
+    		System.out.println("autonomous State: "+ autonomous);
+		}
 	}
 
 }
