@@ -21,6 +21,9 @@ public class Elevator {
 	
 	int elevatorState = 1;
 	
+	double ELEVATORTALON_BOTSWITCH_FALSE = -0.75;
+	double ELEVATORTALON_BOTSWITCH_TRUE = 0.2;
+	
 	double HEIGHT_AUTONOMOUS = 2.3;
 	double HEIGHT_BOTTOM = 0.0;
 	double HEIGHT_TOTEONE = 3.0;
@@ -54,20 +57,20 @@ public class Elevator {
 
 		elevatorState = 1; // elevator state is set to 1
 		if (elevatorState == 1) { 
-			if ( botSwitch.get() == false) { 
-				talonElevator.set(-0.75);// if switch state is 1 and bot switch is not true lowers elevator
+			if (botSwitch.get() == false) { 
+				talonElevator.set(ELEVATORTALON_BOTSWITCH_FALSE);// if switch state is 1 and bot switch is not true lowers elevator
 			}
-			if ( botSwitch.get() == true) {
+			if (botSwitch.get() == true) {
 				talonElevator.set(0); // if bot switch state is pressed stops elevator
 				
-				talonElevator.set(0.2);
+				talonElevator.set(ELEVATORTALON_BOTSWITCH_TRUE);
 				Timer.delay(0.5); // lifts elevator
 				 
 				encoderElevator.reset(); //resets encoder to zero
 				elevatorState = 2; // changes elevator state to 2
 			}
-
 		}
+	
 		if (elevatorState == 2) {
 			elevator.enable(); // if switch state is 2 enables PID Controller
 		}
@@ -94,7 +97,6 @@ public class Elevator {
 			elevator.setSetpoint(HEIGHT_TOP); // sets pid to move to top position
 		}
 		
-	
 		if(topSwitch.get() == true){
 			elevator.setSetpoint(HEIGHT_TOTEFOUR); // if top switch is pressed lowers elevator
 		}
