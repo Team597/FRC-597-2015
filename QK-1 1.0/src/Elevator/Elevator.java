@@ -13,7 +13,7 @@ public class Elevator {
 	Talon talonElevator;
 	Encoder encoderElevator;
 	PIDController elevator;
-	Joystick joystickElevator;
+	Joystick xboxGamepad;
 	DigitalInput topSwitch;
 	DigitalInput botSwitch;
 	DoubleSolenoid brake;
@@ -22,7 +22,7 @@ public class Elevator {
 
 	public Elevator() {
 		talonElevator = new Talon(3);
-		joystickElevator = new Joystick(3);
+		xboxGamepad = new Joystick(3);
 		encoderElevator = new Encoder(0, 1);
 		topSwitch = new DigitalInput(2);
 		botSwitch = new DigitalInput(3);
@@ -65,28 +65,25 @@ public class Elevator {
 
 	public void teleopPeriodic() {
 
-		if (joystickElevator.getRawButton(2) == true) {
-			elevator.setSetpoint(0.0); // sets pid to move to base position
-			
+		if (xboxGamepad.getRawButton(1) == true) {
+			elevator.setSetpoint(0.0); // sets pid to move to base position	
 		}
-		if (joystickElevator.getRawButton(3) == true) {
+		if (xboxGamepad.getRawButton(2) == true) {
 			elevator.setSetpoint(3.0); // sets pid to move to tote 1 position
 		}
-		if (joystickElevator.getRawButton(4) == true) {
+		if (xboxGamepad.getRawButton(3) == true) {
 			elevator.setSetpoint(5.0); // sets pid to move to tote 2 position
 		}
-		if (joystickElevator.getRawButton(1) == true) {
+		if (xboxGamepad.getRawButton(4) == true) {
 			elevator.setSetpoint(7.0); // sets pid to move to tote 3 position
-
 		}
-		if (joystickElevator.getRawButton(10) == true) {
+		if (xboxGamepad.getRawAxis(2) > 0) {
 			elevator.setSetpoint(9.0); // sets pid to move to tote 4 position
 		}
-		if (joystickElevator.getRawButton(11) == true) {
+		if (xboxGamepad.getRawAxis(3) > 0) {
 			elevator.setSetpoint(11.0); // sets pid to move to top position
-
 		}
-
+		
 	
 		if(topSwitch.get() == true){
 			elevator.setSetpoint(9.0); // if top switch is pressed lowers elevator
@@ -95,9 +92,9 @@ public class Elevator {
 			elevator.setSetpoint(3.0); // if bot switch is pressed lifts elevator
 		}
 		
-		if(joystickElevator.getRawButton(7) == true && botSwitch.get() == false && topSwitch.get() == false){
+		if(xboxGamepad.getRawButton(7) == true && botSwitch.get() == false && topSwitch.get() == false){
 			elevator.disable(); // if button 7 is pressed and no switches are being pressed it changes to manual control
-			talonElevator.set(joystickElevator.getY());
+			talonElevator.set(xboxGamepad.getY());
 		}
 		else{
 			elevator.enable(); // when the conditions are not met enables the PID Controller
