@@ -105,7 +105,7 @@ public class Elevator {
 		}
 		
 		if(xboxGamepad.getRawButton(1) == true && botSwitch.get() == false && topSwitch.get() == false){
-			elevator.disable(); // if button 7 is pressed and no switches are being pressed it changes to manual control
+			elevator.disable(); // if button A is pressed and no switches are being pressed it changes to manual control
 			talonElevator.set(xboxGamepad.getY()); //change to another joystick for better control
 		}
 		else{

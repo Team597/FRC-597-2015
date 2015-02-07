@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,6 +44,10 @@ public class Robot extends IterativeRobot {
 	Drive robotDriveOmni;
 	Claw robotClaw;
 	
+	Command autonomousCommand;
+	SendableChooser autoChooser;
+	
+	
 	long lastPrint = System.currentTimeMillis();
 
 	public Robot() {
@@ -65,13 +72,37 @@ public class Robot extends IterativeRobot {
 		robotDriveOmni.robotInit();
 		elevator.robotInit();
 		
+		autoChooser = new SendableChooser();
+		autoChooser.addDefault("Default program", new Integer(0));
+		autoChooser.addDefault("Autonomous number 1", new Integer(1));
+		autoChooser.addDefault("Autonomous number 2", new Integer(2));
+		autoChooser.addDefault("Autonomous number 3", new Integer(3));
+		autoChooser.addDefault("Autonomous number 4", new Integer(4));
+		autoChooser.addDefault("Autonomous number 5", new Integer(5));
+		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
+		
+	}
+	
+	public void autonomousInit(){
+		// Fintan's special don't-crash try block
+		try {
+			
+			int automode = (Integer) autoChooser.getSelected();
+			autonomous.setAutonomous(automode);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-
+		
+	}
+	
+	public void disabledPeriodic(){
+		
 	}
 
 	/**
@@ -81,8 +112,6 @@ public class Robot extends IterativeRobot {
 		robotDriveOmni.teleopPeriodic();
 		elevator.teleopPeriodic();
 		robotClaw.teleopPeriodic();
-		
-		
 		
 		//testing code for xboxGamepad
 		if(System.currentTimeMillis() >= lastPrint){

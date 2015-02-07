@@ -26,6 +26,7 @@ public class Autonomous {
 	Elevator autoElevator;
 
 	int autonomous = 0;
+	int maxAutonomous = 10;
 
 	public Autonomous(Joystick JL, Joystick JR, Talon TL, Talon TR, Talon OT,
 			DoubleSolenoid OD, DoubleSolenoid CL, DoubleSolenoid CR) {
@@ -52,7 +53,17 @@ public class Autonomous {
 		solenoidClawRight.set(Value.kForward);
 
 	}
-
+	
+	public void setAutonomous(int auto){
+		autonomous = auto;
+		if (autonomous > maxAutonomous){
+			autonomous = maxAutonomous;
+		}
+		if (autonomous < 0){
+			autonomous = 0;
+		}
+	}
+	
 	public void autonomous() {
 
 		if (autonomous == 0) { // does nothing
