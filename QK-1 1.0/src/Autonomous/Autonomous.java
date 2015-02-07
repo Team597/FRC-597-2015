@@ -10,14 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Autonomous {
-	// Import stuff for drive class
 	Joystick joystickLeft;
 	Joystick joystickRight;
 	Talon talonLeft;
 	Talon talonRight;
 	Talon omniTalon;
 	DoubleSolenoid omniDirection;
-	// Import stuff for claw class
 	DoubleSolenoid solenoidClawLeft;
 	DoubleSolenoid solenoidClawRight;
 	long autonomousPrint = System.currentTimeMillis();
@@ -31,14 +29,12 @@ public class Autonomous {
 
 	public Autonomous(Joystick JL, Joystick JR, Talon TL, Talon TR, Talon OT,
 			DoubleSolenoid OD, DoubleSolenoid CL, DoubleSolenoid CR) {
-		// local drive names
 		joystickLeft = JL;
 		joystickRight = JR;
 		talonLeft = TL;
 		talonRight = TR;
 		omniTalon = OT;
 		omniDirection = OD;
-		// local claw names
 		solenoidClawLeft = CL;
 		solenoidClawRight = CR;
 

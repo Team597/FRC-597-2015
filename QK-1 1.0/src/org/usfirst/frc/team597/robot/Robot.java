@@ -27,6 +27,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	Joystick xboxGamepad;
+	
 	Joystick joystickLeft;
 	Joystick joystickRight;
 	Talon talonLeft;
@@ -47,11 +48,11 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser autoChooser;
 	
-	
 	long lastPrint = System.currentTimeMillis();
 
 	public Robot() {
 		xboxGamepad = new Joystick(2);
+		
 		joystickLeft = new Joystick(0);
 		joystickRight = new Joystick(1);
 		talonLeft = new Talon(0);
@@ -79,6 +80,10 @@ public class Robot extends IterativeRobot {
 		autoChooser.addDefault("Autonomous number 3", new Integer(3));
 		autoChooser.addDefault("Autonomous number 4", new Integer(4));
 		autoChooser.addDefault("Autonomous number 5", new Integer(5));
+		autoChooser.addDefault("Autonomous number 6", new Integer(6));
+		autoChooser.addDefault("Autonomous number 7", new Integer(7));
+		autoChooser.addDefault("Autonomous number 8", new Integer(8));
+		
 		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
 		
 	}
