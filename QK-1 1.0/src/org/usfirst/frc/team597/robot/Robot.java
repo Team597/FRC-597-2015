@@ -83,7 +83,13 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//testing code for xboxGamepad
 		if(System.currentTimeMillis() >= lastPrint){
-    		System.out.println("Button 1  = " + xboxGamepad.getRawButton(1));
+    		System.out.println("Button 1: " + xboxGamepad.getRawButton(1));
+    		System.out.println("joystick left Yaxis: "+ joystickLeft.getY());
+    		System.out.println("joystick Right Yaxis: " + joystickRight.getY());
+    		System.out.println("talon Left: "+ talonLeft.get());
+    		System.out.println("talon Right: "+ talonRight.get());
+    		System.out.println("talon omni: "+ omniTalon.get());
+    		
     		lastPrint += 1000;
     	}
 		
