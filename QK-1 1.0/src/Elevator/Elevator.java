@@ -14,7 +14,7 @@ public class Elevator {
 	PIDController elevator;
 	Joystick joystickElevator;
 	DigitalInput topSwitch;
-	DigitalInput botSwitch
+	DigitalInput botSwitch;
 	
 	int elevatorState = 1;
 
@@ -83,7 +83,7 @@ public class Elevator {
 
 		}
 
-	}
+	
 		if(topSwitch.get() == true){
 			elevator.setSetpoint(9.0); // if top switch is pressed lowers elevator
 		}
@@ -99,4 +99,5 @@ public class Elevator {
 			elevator.enable(); // when the conditions are not met enables the PID Controller
 		}
 		
+	}
 }
