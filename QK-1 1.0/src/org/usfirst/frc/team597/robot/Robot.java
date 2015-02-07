@@ -87,8 +87,8 @@ public class Robot extends IterativeRobot {
 		// Fintan's special don't-crash try block
 		try {
 			
-			int automode = (Integer) autoChooser.getSelected();
-			autonomous.setAutonomous(automode);
+			Integer automode = (Integer) autoChooser.getSelected();
+			autonomous.setAutonomous(automode.intValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
