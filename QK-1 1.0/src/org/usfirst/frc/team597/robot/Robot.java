@@ -42,6 +42,8 @@ public class Robot extends IterativeRobot {
 	Drive robotDriveOmni;
 	Claw robotClaw;
 	
+	boolean buttonPressed;
+	
 
 	public Robot() {
 		xboxGamepad = new Joystick(2);
@@ -78,6 +80,10 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+		//testing code for xboxGamepad
+		buttonPressed = xboxGamepad.getRawButton(1);
+		
+		
 		robotDriveOmni.teleopPeriodic();
 		elevator.teleopPeriodic();
 		robotClaw.teleopPeriodic();
