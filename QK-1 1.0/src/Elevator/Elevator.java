@@ -39,23 +39,24 @@ public class Elevator {
 
 	public void robotInit() {
 
-		if (elevatorState == 1) {
-			if ( botSwitch.get() == false) {
-				talonElevator.set(-0.75);
+		elevatorState = 1; // elevator state is set to 1
+		if (elevatorState == 1) { 
+			if ( botSwitch.get() == false) { 
+				talonElevator.set(-0.75);// if switch state is 1 and bot switch is not true lowers elevator
 			}
 			if ( botSwitch.get() == true) {
-				talonElevator.set(0);
+				talonElevator.set(0); // if bot switch state is pressed stops elevator
 				
 				talonElevator.set(0.2);
-				Timer.delay(0.5);
+				Timer.delay(0.5); // lifts elevator
 				 
-				encoderElevator.reset();
-				elevatorState = 2;
+				encoderElevator.reset(); //resets encoder to zero
+				elevatorState = 2; // changes elevator state to 2
 			}
 
 		}
 		if (elevatorState == 2) {
-			elevator.enable();
+			elevator.enable(); // if switch state is 2 enables PID Controller
 		}
 	}
 
