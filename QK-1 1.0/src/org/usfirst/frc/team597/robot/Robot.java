@@ -50,9 +50,9 @@ public class Robot extends IterativeRobot {
 		talonLeft = new Talon(0);
 		talonRight = new Talon(1);
 		omniTalon = new Talon(2);
-		omniDirection = new DoubleSolenoid(5, 6);
-		solenoidClawLeft = new DoubleSolenoid(1, 2);
-		solenoidClawRight = new DoubleSolenoid(3, 4);
+		omniDirection = new DoubleSolenoid(4, 5);
+		solenoidClawLeft = new DoubleSolenoid(0, 1);
+		solenoidClawRight = new DoubleSolenoid(2, 3);
 		compressorAir = new Compressor();
 		
 		autonomous = new Autonomous(joystickLeft, joystickLeft, talonLeft, talonRight, omniTalon, omniDirection, solenoidClawLeft, solenoidClawRight);

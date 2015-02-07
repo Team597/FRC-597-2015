@@ -1,6 +1,7 @@
 package Elevator;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
@@ -15,6 +16,7 @@ public class Elevator {
 	Joystick joystickElevator;
 	DigitalInput topSwitch;
 	DigitalInput botSwitch;
+	DoubleSolenoid brake;
 	
 	int elevatorState = 1;
 
@@ -24,6 +26,7 @@ public class Elevator {
 		encoderElevator = new Encoder(0, 1);
 		topSwitch = new DigitalInput(2);
 		botSwitch = new DigitalInput(3);
+		brake = new DoubleSolenoid (6,7);
 		
 		elevator = new PIDController(0, 0, 0.1, encoderElevator, talonElevator);
 	}
@@ -64,6 +67,7 @@ public class Elevator {
 
 		if (joystickElevator.getRawButton(2) == true) {
 			elevator.setSetpoint(0.0); // sets pid to move to base position
+			
 		}
 		if (joystickElevator.getRawButton(3) == true) {
 			elevator.setSetpoint(3.0); // sets pid to move to tote 1 position
