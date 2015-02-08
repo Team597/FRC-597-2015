@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Elevator {
 
@@ -27,7 +28,7 @@ public class Elevator {
 	double HEIGHT_AUTONOMOUS = 2.3;
 	double HEIGHT_BOTTOM = 0.0;
 	double HEIGHT_TOTEONE = 3.0;
-	double HEIGH_TOTETWO = 5.0;
+	double HEIGHT_TOTETWO = 5.0;
 	double HEIGHT_TOTETHREE = 7.0;
 	double HEIGHT_TOTEFOUR = 9.0;
 	double HEIGHT_TOP = 11.0;
@@ -45,20 +46,32 @@ public class Elevator {
 
 	public void autoDrop() {
 		elevator.setSetpoint(HEIGHT_BOTTOM); // lowers elevator for autonomous
+
+		if (encoderElevator.get() == HEIGHT_BOTTOM) {
+			brake.set(Value.kForward);
+		} else {
+			brake.set(Value.kReverse);
+		}
 	}
 
 	public void autoLift() {
 		elevator.setSetpoint(HEIGHT_AUTONOMOUS); // lifts elevator for
 													// autonomous
+		if (encoderElevator.get() == HEIGHT_AUTONOMOUS) {
+			brake.set(Value.kForward);
+		} else {
+			brake.set(Value.kReverse);
+		}
 	}
-	public void elevatorPrint(){
-		if (System.currentTimeMillis() >= elevatorprint){
-    		System.out.println("top switch: "+ topSwitch.get());
-    		System.out.println("bot switch: "+ botSwitch.get());
-    		System.out.println("Elevator encoder: "+ encoderElevator.get());
-    		System.out.println(" Elevator" + elevator.get());
-    		
-    		elevatorprint += 1000;
+
+	public void elevatorPrint() {
+		if (System.currentTimeMillis() >= elevatorprint) {
+			System.out.println("top switch: " + topSwitch.get());
+			System.out.println("bot switch: " + botSwitch.get());
+			System.out.println("Elevator encoder: " + encoderElevator.get());
+			System.out.println(" Elevator" + elevator.get());
+
+			elevatorprint += 1000;
 		}
 	}
 
@@ -97,35 +110,76 @@ public class Elevator {
 		if (xboxGamepad.getRawButton(1) == true) {
 			elevator.setSetpoint(HEIGHT_BOTTOM); // sets pid to move to base
 													// position
+			if (encoderElevator.get() == HEIGHT_BOTTOM) {
+				brake.set(Value.kForward);
+			} else {
+				brake.set(Value.kReverse);
+			}
 		}
 		if (xboxGamepad.getRawButton(2) == true) {
 			elevator.setSetpoint(HEIGHT_TOTEONE); // sets pid to move to tote 1
 													// position
+			if (encoderElevator.get() == HEIGHT_TOTEONE) {
+				brake.set(Value.kForward);
+			} else {
+				brake.set(Value.kForward);
+			}
+
 		}
 		if (xboxGamepad.getRawButton(3) == true) {
-			elevator.setSetpoint(HEIGH_TOTETWO); // sets pid to move to tote 2
+			elevator.setSetpoint(HEIGHT_TOTETWO); // sets pid to move to tote 2
 													// position
+			if (encoderElevator.get() == HEIGHT_TOTETWO) {
+				brake.set(Value.kForward);
+			} else {
+				brake.set(Value.kReverse);
+			}
 		}
 		if (xboxGamepad.getRawButton(4) == true) {
 			elevator.setSetpoint(HEIGHT_TOTETHREE); // sets pid to move to tote
 													// 3 position
+			if(encoderElevator.get() == HEIGHT_TOTETHREE){
+				brake.set(Value.kForward);
+			}else{
+				brake.set(Value.kReverse);
+			}
 		}
 		if (xboxGamepad.getRawAxis(2) > 0) {
 			elevator.setSetpoint(HEIGHT_TOTEFOUR); // sets pid to move to tote 4
 													// position
+			if(encoderElevator.get() == HEIGHT_TOTEFOUR){
+				brake.set(Value.kForward);
+			}else{
+				brake.set(Value.kReverse);
+			}
 		}
 		if (xboxGamepad.getRawAxis(3) > 0) {
 			elevator.setSetpoint(HEIGHT_TOP); // sets pid to move to top
 												// position
+			if(encoderElevator.get() == HEIGHT_TOP){
+				brake.set(Value.kForward);
+			}else{
+				brake.set(Value.kReverse);
+			}
 		}
 
 		if (topSwitch.get() == true) {
 			elevator.setSetpoint(HEIGHT_TOTEFOUR); // if top switch is pressed
 													// lowers elevator
+			if(encoderElevator.get() == HEIGHT_TOTEFOUR){
+				brake.set(Value.kForward);
+			}else{
+				brake.set(Value.kReverse);
+			}
 		}
 		if (botSwitch.get() == true) {
 			elevator.setSetpoint(HEIGHT_TOTEONE); // if bot switch is pressed
 													// lifts elevator
+			if(encoderElevator.get() == HEIGHT_TOTEONE){
+				brake.set(Value.kForward);
+			}else{
+				brake.set(Value.kReverse);
+			}
 		}
 
 		if (xboxGamepad.getRawButton(1) == true && botSwitch.get() == false
