@@ -58,7 +58,7 @@ public class Drive {
 		}
 
 		else if (driveState == 2) { // when driveState is 2 allows robot to move
-									// from left to right.
+									// from left to right, and disables tank drive.
 			
 			talonLeft.set(0);
 			talonRight.set(0);
