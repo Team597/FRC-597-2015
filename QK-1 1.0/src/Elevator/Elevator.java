@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Elevator {
@@ -35,7 +34,7 @@ public class Elevator {
 
 	public Elevator() {
 		talonElevator = new Talon(3);
-		xboxGamepad = new Joystick(3);
+		xboxGamepad = new Joystick(4);
 		encoderElevator = new Encoder(0, 1);
 		topSwitch = new DigitalInput(2);
 		botSwitch = new DigitalInput(3);
@@ -77,28 +76,9 @@ public class Elevator {
 
 	public void robotInit() {
 
-		elevatorState = 1; // elevator state is set to 1
-		if (elevatorState == 1) {
-			if (botSwitch.get() == false) {
-				talonElevator.set(ELEVATORTALON_BOTSWITCH_FALSE);// if switchstate is 1 and bot switch is not true lowers elevator
-			}
-			if (botSwitch.get() == true) {
-				talonElevator.set(0); // if bot switch state is pressed stops
-										// elevator
+		elevator.enable();
 
-				talonElevator.set(ELEVATORTALON_BOTSWITCH_TRUE);
-				Timer.delay(0.5); // lifts elevator
-
-				encoderElevator.reset(); // resets encoder to zero
-				elevatorState = 2; // changes elevator state to 2
-			}
-		}
-
-		if (elevatorState == 2) {
-			elevator.enable(); // if switch state is 2 enables PID Controller
-		}
 	}
-
 	public void teleopPeriodic() {
 
 		if (xboxGamepad.getRawButton(1) == true) {
