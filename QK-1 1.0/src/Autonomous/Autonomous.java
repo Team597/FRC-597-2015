@@ -4,6 +4,7 @@ import Bane.Claw;
 import Bane.Drive;
 import Elevator.Elevator;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,6 +19,7 @@ public class Autonomous {
 	DoubleSolenoid omniDirection;
 	DoubleSolenoid solenoidClawLeft;
 	DoubleSolenoid solenoidClawRight;
+	Encoder omniEncoder;
 	long autoPrint = System.currentTimeMillis();
 
 	Drive robotDriveOmni;
@@ -39,6 +41,7 @@ public class Autonomous {
 		omniDirection = OD;
 		solenoidClawLeft = CL;
 		solenoidClawRight = CR;
+		omniEncoder = new Encoder (4,5);
 
 		robotDriveOmni = new Drive(JR, JR, OT, OT, OT, CR);
 		robotClaw = new Claw(JR, CR, CR);

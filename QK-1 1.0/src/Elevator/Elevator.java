@@ -80,13 +80,7 @@ public class Elevator {
 		elevatorState = 1; // elevator state is set to 1
 		if (elevatorState == 1) {
 			if (botSwitch.get() == false) {
-				talonElevator.set(ELEVATORTALON_BOTSWITCH_FALSE);// if switch
-																	// state is
-																	// 1 and bot
-																	// switch is
-																	// not true
-																	// lowers
-																	// elevator
+				talonElevator.set(ELEVATORTALON_BOTSWITCH_FALSE);// if switchstate is 1 and bot switch is not true lowers elevator
 			}
 			if (botSwitch.get() == true) {
 				talonElevator.set(0); // if bot switch state is pressed stops
@@ -138,46 +132,52 @@ public class Elevator {
 		if (xboxGamepad.getRawButton(4) == true) {
 			elevator.setSetpoint(HEIGHT_TOTETHREE); // sets pid to move to tote
 													// 3 position
-			if(encoderElevator.get() == HEIGHT_TOTETHREE){
+			if (encoderElevator.get() == HEIGHT_TOTETHREE) {
 				brake.set(Value.kForward);
-			}else{
+			} else {
 				brake.set(Value.kReverse);
 			}
 		}
 		if (xboxGamepad.getRawAxis(2) > 0) {
 			elevator.setSetpoint(HEIGHT_TOTEFOUR); // sets pid to move to tote 4
 													// position
-			if(encoderElevator.get() == HEIGHT_TOTEFOUR){
+			if (encoderElevator.get() == HEIGHT_TOTEFOUR) {
 				brake.set(Value.kForward);
-			}else{
+			} else {
 				brake.set(Value.kReverse);
 			}
 		}
 		if (xboxGamepad.getRawAxis(3) > 0) {
 			elevator.setSetpoint(HEIGHT_TOP); // sets pid to move to top
 												// position
-			if(encoderElevator.get() == HEIGHT_TOP){
+			if (encoderElevator.get() == HEIGHT_TOP) {
 				brake.set(Value.kForward);
-			}else{
+			} else {
 				brake.set(Value.kReverse);
 			}
+		}
+		if (xboxGamepad.getRawButton(1) && xboxGamepad.getRawButton(2)) {
+			elevator.disable();
+		}
+		if (xboxGamepad.getRawAxis(3) > 0 && xboxGamepad.getRawAxis(2) > 0) {
+			elevator.enable();
 		}
 
 		if (topSwitch.get() == true) {
 			elevator.setSetpoint(HEIGHT_TOTEFOUR); // if top switch is pressed
 													// lowers elevator
-			if(encoderElevator.get() == HEIGHT_TOTEFOUR){
+			if (encoderElevator.get() == HEIGHT_TOTEFOUR) {
 				brake.set(Value.kForward);
-			}else{
+			} else {
 				brake.set(Value.kReverse);
 			}
 		}
 		if (botSwitch.get() == true) {
 			elevator.setSetpoint(HEIGHT_TOTEONE); // if bot switch is pressed
 													// lifts elevator
-			if(encoderElevator.get() == HEIGHT_TOTEONE){
+			if (encoderElevator.get() == HEIGHT_TOTEONE) {
 				brake.set(Value.kForward);
-			}else{
+			} else {
 				brake.set(Value.kReverse);
 			}
 		}

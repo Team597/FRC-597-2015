@@ -27,7 +27,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	Joystick xboxGamepad;
-
+	
 	Joystick joystickLeft;
 	Joystick joystickRight;
 	Talon talonLeft;
@@ -39,20 +39,20 @@ public class Robot extends IterativeRobot {
 	Compressor compressorAir;
 	DigitalInput topSwitch;
 	DigitalInput botSwitch;
-
+	
 	Elevator elevator;
 	Autonomous autonomous;
 	Drive robotDriveOmni;
 	Claw robotClaw;
-
+	
 	Command autonomousCommand;
 	SendableChooser autoChooser;
-
+	
 	long lastPrint = System.currentTimeMillis();
 
 	public Robot() {
 		xboxGamepad = new Joystick(2);
-
+		
 		joystickLeft = new Joystick(0);
 		joystickRight = new Joystick(1);
 		talonLeft = new Talon(0);
@@ -62,20 +62,17 @@ public class Robot extends IterativeRobot {
 		solenoidClawLeft = new DoubleSolenoid(0, 1);
 		solenoidClawRight = new DoubleSolenoid(2, 3);
 		compressorAir = new Compressor();
-
-		autonomous = new Autonomous(joystickLeft, joystickLeft, talonLeft,
-				talonRight, omniTalon, omniDirection, solenoidClawLeft,
-				solenoidClawRight);
+		
+		autonomous = new Autonomous(joystickLeft, joystickLeft, talonLeft, talonRight, omniTalon, omniDirection, solenoidClawLeft, solenoidClawRight);
 		elevator = new Elevator();
-		robotDriveOmni = new Drive(joystickLeft, joystickRight, talonLeft,
-				talonRight, omniTalon, omniDirection);
+		robotDriveOmni = new Drive(joystickLeft, joystickRight, talonLeft, talonRight, omniTalon, omniDirection);
 		robotClaw = new Claw(joystickLeft, solenoidClawLeft, solenoidClawRight);
 	}
 
 	public void robotInit() {
 		robotDriveOmni.robotInit();
 		elevator.robotInit();
-
+		
 		autoChooser = new SendableChooser();
 		autoChooser.addDefault("Default program", new Integer(0));
 		autoChooser.addDefault("Autonomous number 1", new Integer(1));
@@ -86,15 +83,15 @@ public class Robot extends IterativeRobot {
 		autoChooser.addDefault("Autonomous number 6", new Integer(6));
 		autoChooser.addDefault("Autonomous number 7", new Integer(7));
 		autoChooser.addDefault("Autonomous number 8", new Integer(8));
-
+		
 		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
-
+		
 	}
-
-	public void autonomousInit() {
+	
+	public void autonomousInit(){
 		// Fintan's special don't-crash try block
 		try {
-
+			
 			Integer automode = (Integer) autoChooser.getSelected();
 			autonomous.setAutonomous(automode.intValue());
 		} catch (Exception e) {
@@ -106,11 +103,11 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-
+		
 	}
-
-	public void disabledPeriodic() {
-
+	
+	public void disabledPeriodic(){
+		
 	}
 
 	/**
@@ -120,21 +117,21 @@ public class Robot extends IterativeRobot {
 		robotDriveOmni.teleopPeriodic();
 		elevator.teleopPeriodic();
 		robotClaw.teleopPeriodic();
-
-		// testing code for xboxGamepad
-		if (System.currentTimeMillis() >= lastPrint) {
-			System.out.println("Button 1: " + xboxGamepad.getRawButton(1));
-			System.out.println("joystick left Yaxis: " + joystickLeft.getY());
-			System.out.println("joystick Right Yaxis: " + joystickRight.getY());
-			System.out.println("talon Left: " + talonLeft.get());
-			System.out.println("talon Right: " + talonRight.get());
-			System.out.println("talon omni: " + omniTalon.get());
-			lastPrint += 1000;
-		}
-
+		
+		//testing code for xboxGamepad
+		if(System.currentTimeMillis() >= lastPrint){
+    		System.out.println("Button 1: " + xboxGamepad.getRawButton(1));
+    		System.out.println("joystick left Yaxis: "+ joystickLeft.getY());
+    		System.out.println("joystick Right Yaxis: " + joystickRight.getY());
+    		System.out.println("talon Left: "+ talonLeft.get());
+    		System.out.println("talon Right: "+ talonRight.get());
+    		System.out.println("talon omni: "+ omniTalon.get());
+    		lastPrint += 1000;
+    	}
+	
 		elevator.elevatorPrint();
 		autonomous.autoPrint();
-
+		
 	}
 
 	/**
