@@ -5,7 +5,6 @@ import Bane.Claw;
 import Bane.Drive;
 import Elevator.Elevator;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -37,8 +36,6 @@ public class Robot extends IterativeRobot {
 	DoubleSolenoid solenoidClawLeft;
 	DoubleSolenoid solenoidClawRight;
 	Compressor compressorAir;
-	DigitalInput topSwitch;
-	DigitalInput botSwitch;
 	
 	Elevator elevator;
 	Autonomous autonomous;
