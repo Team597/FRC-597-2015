@@ -18,7 +18,6 @@ public class Autonomous {
 	Talon omniTalon;
 	DoubleSolenoid omniDirection;
 	DoubleSolenoid solenoidClawLeft;
-	DoubleSolenoid solenoidClawRight;
 	Encoder omniEncoder;
 	long autoPrint = System.currentTimeMillis();
 
@@ -40,11 +39,10 @@ public class Autonomous {
 		omniTalon = OT;
 		omniDirection = OD;
 		solenoidClawLeft = CL;
-		solenoidClawRight = CR;
 		omniEncoder = new Encoder (4,5);
 
 		robotDriveOmni = new Drive(JR, JR, OT, OT, OT, CR);
-		robotClaw = new Claw(JR, CR, CR);
+		robotClaw = new Claw(JR, CR);
 		autoElevator = new Elevator();
 
 	}
@@ -53,8 +51,7 @@ public class Autonomous {
 		autoElevator.autoDrop(); // lowers elevator.
 		omniDirection.set(Value.kForward); // lowers omni talon
 		solenoidClawLeft.set(Value.kForward); // opens claw
-		solenoidClawRight.set(Value.kForward); // opens claw
-		autoTimer.start(); // starts auto timer.
+			autoTimer.start(); // starts auto timer.
 	}
 
 	public void autoPrint() {
@@ -98,7 +95,6 @@ public class Autonomous {
 
 			if (autoState == 0) { // closes claw
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse);
 				autoState = 1;
 			}
 
@@ -122,7 +118,6 @@ public class Autonomous {
 
 			if (autoState == 0) {
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse); // closes claw
 
 				autoState = 1;
 			}
@@ -145,8 +140,6 @@ public class Autonomous {
 
 			if (autoState == 4 && autoTimer.get() >= 4.3) {
 				solenoidClawLeft.set(Value.kForward);
-				solenoidClawRight.set(Value.kForward); // opens claw
-
 				autoState = 5;
 			}
 			if (autoState == 5 && autoTimer.get() >= 4.6) {
@@ -163,7 +156,6 @@ public class Autonomous {
 
 			if (autoState == 7 && autoTimer.get() >= 6.6) {
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse); // closes claw
 
 				autoState = 8;
 			}
@@ -189,7 +181,6 @@ public class Autonomous {
 
 			if (autoState == 0) {
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse); // close claw
 
 				autoState = 1;
 			}
@@ -212,7 +203,6 @@ public class Autonomous {
 			}
 			if (autoState == 4 && autoTimer.get() >= 4.3) {
 				solenoidClawLeft.set(Value.kForward);
-				solenoidClawRight.set(Value.kForward); // opens claw
 
 				autoState = 5;
 			}
@@ -224,7 +214,6 @@ public class Autonomous {
 			}
 			if (autoState == 6 && autoTimer.get() >= 5.6) {
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse); // closes claw
 
 				autoState = 7;
 			}
@@ -254,7 +243,6 @@ public class Autonomous {
 
 				if (autoState == 0) {
 					solenoidClawLeft.set(Value.kReverse);
-					solenoidClawRight.set(Value.kReverse); // closes claw
 
 					autoState = 1;
 				}
@@ -280,7 +268,6 @@ public class Autonomous {
 
 				if (autoState == 4 && autoTimer.get() >= 4.3) {
 					solenoidClawLeft.set(Value.kForward);
-					solenoidClawRight.set(Value.kForward); // opens claw
 
 					autoState = 5;
 				}
@@ -295,7 +282,6 @@ public class Autonomous {
 				if (autoState == 6 && autoTimer.get() >= 5.6) {
 
 					solenoidClawLeft.set(Value.kReverse);
-					solenoidClawRight.set(Value.kReverse); // closes claw
 
 					autoState = 7;
 				}
@@ -330,7 +316,6 @@ public class Autonomous {
 
 				if (autoState == 0) {
 					solenoidClawLeft.set(Value.kReverse);
-					solenoidClawRight.set(Value.kReverse); // close claw
 
 					autoState = 1;
 				}
@@ -356,8 +341,6 @@ public class Autonomous {
 
 				if (autoState == 4 && autoTimer.get() >= 4.3) {
 					solenoidClawLeft.set(Value.kForward);
-					solenoidClawRight.set(Value.kForward);
-
 					autoState = 5;
 				}
 
@@ -371,7 +354,6 @@ public class Autonomous {
 
 				if (autoState == 6 && autoTimer.get() >= 5.6)
 					solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse);
 
 				autoState = 7;
 			}
@@ -396,8 +378,6 @@ public class Autonomous {
 
 			if (autoState == 10 && autoTimer.get() >= 9.9) {
 				solenoidClawLeft.set(Value.kForward);
-				solenoidClawRight.set(Value.kForward);
-
 				autoState = 11;
 			}
 			if (autoState == 11 && autoTimer.get() >= 10.2) {
@@ -408,7 +388,6 @@ public class Autonomous {
 			}
 			if (autoState == 12 && autoTimer.get() >= 11.2) {
 				solenoidClawLeft.set(Value.kReverse);
-				solenoidClawRight.set(Value.kReverse);
 
 				autoState = 13;
 			}

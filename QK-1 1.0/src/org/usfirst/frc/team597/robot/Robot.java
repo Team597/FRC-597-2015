@@ -63,7 +63,7 @@ public class Robot extends IterativeRobot {
 		autonomous = new Autonomous(joystickLeft, joystickLeft, talonLeft, talonRight, omniTalon, omniDirection, solenoidClawLeft, solenoidClawRight);
 		elevator = new Elevator();
 		robotDriveOmni = new Drive(joystickLeft, joystickRight, talonLeft, talonRight, omniTalon, omniDirection);
-		robotClaw = new Claw(joystickLeft, solenoidClawLeft, solenoidClawRight);
+		robotClaw = new Claw(joystickLeft, solenoidClawLeft);
 	}
 
 	public void robotInit() {
