@@ -25,8 +25,6 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	Joystick xboxGamepad;
-	
 	Joystick joystickLeft;
 	Joystick joystickRight;
 	Talon talonLeft;
@@ -48,8 +46,6 @@ public class Robot extends IterativeRobot {
 	long lastPrint = System.currentTimeMillis();
 
 	public Robot() {
-		xboxGamepad = new Joystick(2);
-		
 		joystickLeft = new Joystick(0);
 		joystickRight = new Joystick(1);
 		talonLeft = new Talon(0);
@@ -114,17 +110,6 @@ public class Robot extends IterativeRobot {
 		robotDriveOmni.teleopPeriodic();
 		elevator.teleopPeriodic();
 		robotClaw.teleopPeriodic();
-		
-		//testing code for xboxGamepad
-		if(System.currentTimeMillis() >= lastPrint){
-    		System.out.println("Button 1: " + xboxGamepad.getRawButton(1));
-    		System.out.println("joystick left Yaxis: "+ joystickLeft.getY());
-    		System.out.println("joystick Right Yaxis: " + joystickRight.getY());
-    		System.out.println("talon Left: "+ talonLeft.get());
-    		System.out.println("talon Right: "+ talonRight.get());
-    		System.out.println("talon omni: "+ omniTalon.get());
-    		lastPrint += 1000;
-    	}
 	
 		elevator.elevatorPrint();
 		autonomous.autoPrint();
