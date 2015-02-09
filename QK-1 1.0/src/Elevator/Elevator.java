@@ -33,8 +33,8 @@ public class Elevator {
 	double HEIGHT_TOP = 11.0;
 
 	public Elevator() {
-		talonElevator = new Talon(3);
-		xboxGamepad = new Joystick(4);
+		talonElevator = new Talon(4);
+		xboxGamepad = new Joystick(2);
 		encoderElevator = new Encoder(0, 1);
 		topSwitch = new DigitalInput(2);
 		botSwitch = new DigitalInput(3);
