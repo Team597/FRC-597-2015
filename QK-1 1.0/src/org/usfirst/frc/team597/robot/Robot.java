@@ -29,8 +29,8 @@ public class Robot extends IterativeRobot {
 	Joystick j3 = new Joystick(2);
 	Talon t1 = new Talon(0);
 	Talon t2 = new Talon(1);
-	Talon oT = new Talon(2);
-	Talon t3 = new Talon(4);
+	Talon oT = new Talon(4); //not connected on roboRio
+	Talon t3 = new Talon(2);
 	Compressor comp = new Compressor();
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
