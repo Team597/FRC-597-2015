@@ -1,11 +1,15 @@
 package org.usfirst.frc.team597.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,9 +33,28 @@ public class Robot extends IterativeRobot {
 	Compressor comp = new Compressor();
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
+	Encoder en1 = new Encoder(0, 1);
+	PIDController elev = new PIDController(0, 0, 0, en1, t3);
+	DigitalInput lBot = new DigitalInput(2);
+	int eS = 1;
 
 	public void robotInit() {
 
+		eS = 1;
+		if (eS == 1) {
+			t3.set(-0.5);
+			if (lBot.get() == true) {
+				t3.set(0);
+				en1.reset();
+				eS = 2;
+			}
+			if (eS == 2) {
+				t3.set(.80);
+				Timer.delay(1);
+				elev.enable();
+			}
+
+		}
 	}
 
 	/**
@@ -48,7 +71,10 @@ public class Robot extends IterativeRobot {
 
 		t1.set(j1.getY() * -1);
 		t2.set(j2.getY());
-		t3.set(j3.getY());
+		if(j2.getRawButton(2)){
+			t3.set(j3.getY());
+			
+		}
 
 		if (j1.getRawButton(1) == true) {
 			claw.set(Value.kReverse);
@@ -61,9 +87,27 @@ public class Robot extends IterativeRobot {
 		} else {
 			brake.set(Value.kReverse);
 		}
-	}
 
-	
+		if (j3.getRawButton(2)) {
+			elev.setSetpoint(2.0);			
+		}
+		if (j3.getRawButton(3)) {
+			elev.setSetpoint(4.0);
+		}
+		if (j3.getRawButton(4)) {
+			elev.setSetpoint(5.0);
+		}
+		if (j3.getRawButton(5)) {
+			elev.setSetpoint(6.0);
+		}
+		if(j2.getRawButton(2)){
+			elev.disable();
+			t3.set(0);
+		}
+		if(j3.getRawButton(7)){
+			elev.enable();
+		}
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */
