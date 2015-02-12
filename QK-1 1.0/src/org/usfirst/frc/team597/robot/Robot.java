@@ -35,7 +35,7 @@ public class Robot extends IterativeRobot {
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
 	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
-	Encoder en1 = new Encoder(0, 1);
+	Encoder en1 = new Encoder(7, 8);
 	PIDController elev = new PIDController(0, 0, 0, en1, t3);
 	DigitalInput lBot = new DigitalInput(2);
 	int eS = 1;
