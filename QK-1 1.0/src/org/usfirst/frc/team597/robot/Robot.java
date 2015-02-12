@@ -29,10 +29,12 @@ public class Robot extends IterativeRobot {
 	Joystick j3 = new Joystick(2);
 	Talon t1 = new Talon(0);
 	Talon t2 = new Talon(1);
+	Talon oT = new Talon(2);
 	Talon t3 = new Talon(4);
 	Compressor comp = new Compressor();
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
+	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
 	Encoder en1 = new Encoder(0, 1);
 	PIDController elev = new PIDController(0, 0, 0, en1, t3);
 	DigitalInput lBot = new DigitalInput(2);
@@ -71,12 +73,19 @@ public class Robot extends IterativeRobot {
 
 		t1.set(j1.getY() * -1);
 		t2.set(j2.getY());
-		if(j2.getRawButton(2)){
+		if (j2.getRawButton(2)) {
 			t3.set(j3.getY());
-			
+
+		}
+		if (j2.getRawButton(1)) {
+			OD.set(Value.kForward);
+			oT.set(j2.getX());
+			t1.set(0);
+			t2.set(0);
+
 		}
 
-		if (j1.getRawButton(1) == true) {
+		if (j3.getRawButton(10) == true) {
 			claw.set(Value.kReverse);
 		} else {
 			claw.set(Value.kForward);
@@ -89,7 +98,7 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (j3.getRawButton(2)) {
-			elev.setSetpoint(2.0);			
+			elev.setSetpoint(2.0);
 		}
 		if (j3.getRawButton(3)) {
 			elev.setSetpoint(4.0);
@@ -100,14 +109,15 @@ public class Robot extends IterativeRobot {
 		if (j3.getRawButton(5)) {
 			elev.setSetpoint(6.0);
 		}
-		if(j2.getRawButton(2)){
+		if (j2.getRawButton(2)) {
 			elev.disable();
 			t3.set(0);
 		}
-		if(j3.getRawButton(7)){
+		if (j3.getRawButton(7)) {
 			elev.enable();
 		}
 	}
+
 	/**
 	 * This function is called periodically during test mode
 	 */
