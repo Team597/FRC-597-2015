@@ -72,13 +72,17 @@ public class Robot extends IterativeRobot {
 		
 	}
 
+	public void autonomousInti() {
+		autoTimer = new Timer();
+		autoTimer.start();
+		autoState = 0;
+	}
+	
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		autoTimer = new Timer();
-		autoTimer.start();
-		autoState = 0;
+
 		
 		if (autoState == 0) {
 			t1.set(0.5);
