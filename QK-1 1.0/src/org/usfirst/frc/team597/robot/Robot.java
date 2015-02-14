@@ -39,16 +39,16 @@ public class Robot extends IterativeRobot {
 	Encoder MM = new Encoder(1, 2);
 	Encoder LT = new Encoder(5, 6);
 	Encoder RT = new Encoder(3, 4);
-	PIDController elev = new PIDController(0, 0, 0, en1, t3);
+	PIDController elev = new PIDController(-1/100.0, 0, 0, en1, t3);
 	DigitalInput lBot = new DigitalInput(0);
 	DigitalInput lTop = new DigitalInput(9);
 	int eS = 1;
 	long print = System.currentTimeMillis();
 
-	double TOTEONE = 3.0;
-	double TOTETWO = 5.0;
-	double TOTETHREE = 7.0;
-	double TOTEFOUR = 9.0;
+	int TOTEONE = 2000;
+	int TOTETWO = 5;
+	int TOTETHREE = 7;
+	int TOTEFOUR = 9;
 
 	public void robotInit() {
 
@@ -66,22 +66,28 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 
+		
 		if (System.currentTimeMillis() >= print) {
 
 			System.out.println("elevator: " + en1.get());
+			System.out.println("Bottm limit switch hit: " + lBot.get());
+			System.out.println("Top limit switch hit: " + lTop.get());
 
-			print += 1000;
+			print = System.currentTimeMillis() + 1000;
 		}
 
-		if (lBot.get() == true) {
+		if (lBot.get() == false) {
+	
+			
 			en1.reset();
-			elev.enable();
-			elev.setSetpoint(TOTEONE);
+			elev.disable();
 		}
 
 		if (j3.getRawButton(1)) {
 			elev.disable();
 			t3.set(j3.getY());
+		}else{
+			//t3.set(0);
 		}
 		if (j2.getRawButton(1) == true) {
 			OD.set(Value.kReverse);
@@ -117,13 +123,10 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (j4.getRawButton(1)) {
+			elev.enable();
 			elev.setSetpoint(TOTEONE);
-			if (en1.get() == TOTEONE) {
-				claw.set(Value.kReverse);
-			} else {
-				claw.set(Value.kForward);
-			}
 		}
+		/*
 		if (j4.getRawButton(2)) {
 			elev.setSetpoint(TOTETWO);
 			if (en1.get() == TOTETWO) {
@@ -148,7 +151,7 @@ public class Robot extends IterativeRobot {
 				claw.set(Value.kForward);
 			}
 		}
-
+*/
 	}
 
 	/**
