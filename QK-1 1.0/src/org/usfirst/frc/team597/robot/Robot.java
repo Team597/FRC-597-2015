@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
 	Talon t2 = new Talon(1);
 	Talon oT = new Talon(2);
 	Talon t3 = new Talon(3);
-	Compressor comp = new Compressor();
+	//Compressor comp = new Compressor();
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
 	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 	Encoder MM = new Encoder(1, 2);
 	Encoder LT = new Encoder(5, 6);
 	Encoder RT = new Encoder(3, 4);
-	PIDController elev = new PIDController(-1 / 100.0, 0, 0, en1, t3);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, en1, t3);
 	DigitalInput lBot = new DigitalInput(0);
 	DigitalInput lTop = new DigitalInput(9);
 	int eS = 1;
@@ -52,7 +52,7 @@ public class Robot extends IterativeRobot {
 	// This will subtract a bunch if the encoder was zeroed to the top
 	// And be zero if it was zeroed to the bottom.
 	int ENCODER_OFFSET = 0;
-	int DIFFERENCE_TOP_BOTTOM_ENCODER = 3833;
+	int DIFFERENCE_TOP_BOTTOM_ENCODER = 3813;
 
 	int BASE = -67;
 	int TOTEONE = 1000;
@@ -87,19 +87,23 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (lBot.get() != lastBotState) {
+			int error = en1.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
+			
 			en1.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
+			System.out.println("Botswitch has been RESET :) Error top vs bottom: "+error);
 		}
 		lastBotState = lBot.get();
 
-		if (lTop.get() != lastTopState) {
+		/*if (lTop.get() != lastTopState) {
 			en1.reset();
 			elev.disable();
 			ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
+			System.out.println("Topswitch has been RESET :)");
 		}
 		lastTopState = lTop.get();
-
+*/
 		if (j3.getRawButton(2)) {
 			elev.disable();
 			t3.set(j3.getY());
