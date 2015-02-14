@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,9 +32,9 @@ public class Robot extends IterativeRobot {
 	Talon t2 = new Talon(1);
 	Talon oT = new Talon(2);
 	Talon t3 = new Talon(3);
-	//Compressor comp = new Compressor();
-	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
-	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
+	Compressor comp = new Compressor();
+	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
+	DoubleSolenoid claw = new DoubleSolenoid(1, 6);
 	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
 	Encoder en1 = new Encoder(7, 8);
 	Encoder MM = new Encoder(1, 2);
@@ -61,14 +62,91 @@ public class Robot extends IterativeRobot {
 	int TOTEFOUR = 3000;
 	int TOP = 3800;
 
-	public void robotInit() {
+	int autonomous = 0;
+	int maxAutonomous = 10;
+	int autoState = 0;
+	Timer autoTimer;
 
+	public void robotInit() {
+		elev.setAbsoluteTolerance(50);
+		
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
+		autoTimer = new Timer();
+		autoTimer.start();
+		autoState = 0;
+		
+		if (autoState == 0) {
+			t1.set(0.5);
+			t2.set(-0.5); // moves forward
+
+			autoState = 1;
+		}
+		if (autoState == 1 && autoTimer.get() >= 0.5) {
+			t1.set(0);
+			t2.set(-0); // stops moving
+		}
+		if (autonomous == 2) {
+
+			claw.set(Value.kReverse);
+			brake.set(Value.kReverse);
+			Timer.delay(.3); // closes claw may be used on totes and containers
+
+			 // lifts elevator
+
+			t1.set(1);
+			t2.set(-1);
+			Timer.delay(1); // moves forward to get mobility bonus
+
+			t1.set(0);
+			t2.set(0);
+			Timer.delay(.1);
+		}
+		if (autonomous == 3) {
+
+			// MOTORS ARE REVERSED PAST THIS POINT
+			// v
+			
+			claw.set(Value.kReverse);
+			brake.set(Value.kReverse);
+			Timer.delay(.3); // closes claw on the tote
+
+			t1.set(-1);
+			t2.set(1);
+			Timer.delay(1); // moves back
+
+			elev.enable();
+			elev.setSetpoint(TOTETHREE + ENCODER_OFFSET);
+
+			oT.set(-1);
+			Timer.delay(2); // moves left
+
+			claw.set(Value.kForward);
+			brake.set(Value.kForward);
+			Timer.delay(.3); // opens claw
+
+			t1.set(-1);
+			t2.set(1);
+			Timer.delay(1); // moves forward into tote
+
+			elev.enable();
+			elev.setSetpoint(TOTETWO + ENCODER_OFFSET);
+
+			claw.set(Value.kReverse);
+			brake.set(Value.kReverse);
+			Timer.delay(.3); // closes claw on tote
+
+			elev.enable();
+			elev.setSetpoint(TOTETHREE + ENCODER_OFFSET);
+
+			t1.set(-1);
+			t2.set(1);
+			Timer.delay(4); // moves forward to get mobility bonus
+		}
 
 	}
 
@@ -88,28 +166,26 @@ public class Robot extends IterativeRobot {
 
 		if (lBot.get() != lastBotState) {
 			int error = en1.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
-			
+
 			en1.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out.println("Botswitch has been RESET :) Error top vs bottom: "+error);
+			System.out
+					.println("Botswitch has been RESET :) Error top vs bottom: "
+							+ error);
 		}
 		lastBotState = lBot.get();
 
-		/*if (lTop.get() != lastTopState) {
-			en1.reset();
-			elev.disable();
-			ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
-			System.out.println("Topswitch has been RESET :)");
-		}
-		lastTopState = lTop.get();
-*/
+		/*
+		 * if (lTop.get() != lastTopState) { en1.reset(); elev.disable();
+		 * ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
+		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
+		 * lTop.get();
+		 */
 		if (j3.getRawButton(2)) {
 			elev.disable();
 			t3.set(j3.getY());
-		} else {
-			// t3.set(0);
-			// 3833
+			brake.set(Value.kForward);
 		}
 		if (j2.getRawButton(1) == true) {
 			OD.set(Value.kReverse);
@@ -132,42 +208,44 @@ public class Robot extends IterativeRobot {
 			t2.set(j2.getY());
 		}
 
-		if (j3.getRawButton(7) == true) {
-			claw.set(Value.kReverse);
-		} else {
-			claw.set(Value.kForward);
-		}
-
 		if (j3.getRawButton(1) == true) {
-			brake.set(Value.kForward);
+			claw.set(Value.kForward);
 		} else {
-			brake.set(Value.kReverse);
+			claw.set(Value.kReverse);
 		}
 
 		if (j4.getRawButton(1)) {
 			elev.enable();
 			elev.setSetpoint(TOTEONE + ENCODER_OFFSET);
+			brake.set(Value.kForward);
 		}
 
 		if (j4.getRawButton(2)) {
 			elev.enable();
 			elev.setSetpoint(TOTETWO + ENCODER_OFFSET);
+			brake.set(Value.kForward);
 		}
 		if (j4.getRawButton(3)) {
 			elev.enable();
 			elev.setSetpoint(TOTETHREE + ENCODER_OFFSET);
+			brake.set(Value.kForward);
 		}
 		if (j4.getRawButton(4)) {
 			elev.enable();
 			elev.setSetpoint(TOTEFOUR + ENCODER_OFFSET);
+			brake.set(Value.kForward);
 		}
 		if (j4.getRawAxis(2) > 0) {
 			elev.enable();
 			elev.setSetpoint(BASE + ENCODER_OFFSET);
+			brake.set(Value.kForward);
 		}
 		if (j4.getRawAxis(3) > 0) {
-			elev.enable();
-			elev.setSetpoint(TOP + ENCODER_OFFSET);
+			
+			brake.set(Value.kReverse);
+			elev.disable();
+			t3.set(0);
+			
 		}
 	}
 
