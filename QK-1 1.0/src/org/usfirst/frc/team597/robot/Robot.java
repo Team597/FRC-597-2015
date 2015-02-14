@@ -29,8 +29,8 @@ public class Robot extends IterativeRobot {
 	Joystick j4 = new Joystick(3);
 	Talon t1 = new Talon(0);
 	Talon t2 = new Talon(1);
-	Talon oT = new Talon(4); //not connected on roboRio
-	Talon t3 = new Talon(2);
+	Talon oT = new Talon(2); // not connected on roboRio
+	Talon t3 = new Talon(3);
 	Compressor comp = new Compressor();
 	DoubleSolenoid claw = new DoubleSolenoid(0, 7);
 	DoubleSolenoid brake = new DoubleSolenoid(1, 6);
@@ -79,11 +79,9 @@ public class Robot extends IterativeRobot {
 			elev.setSetpoint(TOTEONE);
 		}
 
-		if(j3.getRawButton(1)){
+		if (j3.getRawButton(1)) {
 			elev.disable();
 			t3.set(j3.getY());
-			
-		
 		}
 		if (j2.getRawButton(1) == true) {
 			OD.set(Value.kReverse);
