@@ -47,7 +47,6 @@ public class Robot extends IterativeRobot {
 	long print = System.currentTimeMillis();
 
 	boolean lastBotState = false;
-	boolean lastTopState = false;
 
 	// Add this to every setpoint to zero it to the robot
 	// This will subtract a bunch if the encoder was zeroed to the top
@@ -165,7 +164,7 @@ public class Robot extends IterativeRobot {
 			System.out.println("Bottm limit switch hit: " + lBot.get());
 			System.out.println("Top limit switch hit: " + lTop.get());
 
-			print = System.currentTimeMillis() + 1000;
+			print = System.currentTimeMillis() + 500;
 		}
 
 		if (lBot.get() != lastBotState) {
@@ -174,9 +173,7 @@ public class Robot extends IterativeRobot {
 			en1.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out
-					.println("Botswitch has been RESET :) Error top vs bottom: "
-							+ error);
+			System.out.println("Botswitch has been RESET :) Error top vs bottom: "+ error);
 		}
 		lastBotState = lBot.get();
 
@@ -218,28 +215,28 @@ public class Robot extends IterativeRobot {
 			claw.set(Value.kReverse);
 		}
 
-		if (j4.getRawButton(1)) {
+		if (j4.getRawButton(3)) {
 			elev.enable();
 			elev.setSetpoint(TOTEONE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
 
-		if (j4.getRawButton(2)) {
+		if (j4.getRawButton(3)) {
 			elev.enable();
 			elev.setSetpoint(TOTETWO + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
-		if (j4.getRawButton(3)) {
+		if (j4.getRawButton(1)) {
 			elev.enable();
 			elev.setSetpoint(TOTETHREE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
-		if (j4.getRawButton(4)) {
+		if (j4.getRawAxis(2) > 0) {
 			elev.enable();
 			elev.setSetpoint(TOTEFOUR + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
-		if (j4.getRawAxis(2) > 0) {
+		if (j4.getRawButton(2)) {
 			elev.enable();
 			elev.setSetpoint(BASE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
