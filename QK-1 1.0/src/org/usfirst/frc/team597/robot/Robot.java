@@ -59,10 +59,10 @@ public class Robot extends IterativeRobot {
 	int ENCODER_OFFSET = 0;
 	int DIFFERENCE_TOP_BOTTOM_ENCODER = 3813;
 
-	int BASE = -67;
-	int TOTEONE = 9;
-	int TOTETWO = 1200;
-	int TOTETHREE = 1900;
+	int PICKUP_TOTE = -67;
+	int ONE_TOTE_SCORE = 9;
+	int MOVE_CONT = 1200;
+	int TWO_TOTE_SCORE = 1900;
 	int TOTEFOUR = 3000;
 	int TOP = 3800;
  
@@ -196,10 +196,10 @@ public class Robot extends IterativeRobot {
 		 * lTop.get();
 		 */
 		
-		if(j4.getRawButton(6)){
+		if(j4.getRawButton(6) || j3.getRawButton(4)){
 			claw.set(Value.kReverse);
 		}
-		if(j4.getRawButton(8)){
+		if(j4.getRawButton(8) || j3.getRawButton(1)){
 			claw.set(Value.kForward);
 		}
 		
@@ -228,28 +228,21 @@ public class Robot extends IterativeRobot {
 			t1.set(j1.getY() * -1);
 			t2.set(j2.getY());
 		}
-
-		if (j3.getRawButton(1) == true) {
-			claw.set(Value.kForward);
-		}
-		if (j3.getRawButton(4)) {
-			claw.set(Value.kReverse);
-		}
 		
 		if (j3.getRawButton(6)) {
 			elev.enable();
-			elev.setSetpoint(TOTEONE + ENCODER_OFFSET);
+			elev.setSetpoint(ONE_TOTE_SCORE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
 
 		if (j3.getRawButton(7)) {
 			elev.enable();
-			elev.setSetpoint(TOTETWO + ENCODER_OFFSET);
+			elev.setSetpoint(MOVE_CONT + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
 		if (j3.getRawButton(10)) {
 			elev.enable();
-			elev.setSetpoint(TOTETHREE + ENCODER_OFFSET);
+			elev.setSetpoint(TWO_TOTE_SCORE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
 		if (j4.getRawButton(2)){
@@ -261,7 +254,7 @@ public class Robot extends IterativeRobot {
 		if (j3.getRawButton(11)) {
 		//if (j4.getRawButton(2)) {
 			elev.enable();
-			elev.setSetpoint(BASE + ENCODER_OFFSET);
+			elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
 			brake.set(Value.kForward);
 		}
 		if (j3.getRawAxis(3) >  0 || j3.getRawButton(3)) {
