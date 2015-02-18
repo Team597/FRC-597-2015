@@ -29,23 +29,23 @@ public class Robot extends IterativeRobot {
 	Joystick jsRight = new Joystick(1);
 	Joystick jsManualClaw = new Joystick(2);
 	Joystick jsGamepad = new Joystick(3);
-	Talon t1 = new Talon(0);
-	Talon t2 = new Talon(1);
-	Talon oT = new Talon(2);
-	Talon t3 = new Talon(3);
+	Talon talonLeft = new Talon(0);
+	Talon talonRight = new Talon(1);
+	Talon talonOmni = new Talon(2);
+	Talon talonElev = new Talon(3);
 	Compressor comp = new Compressor();
 	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
 	DoubleSolenoid claw = new DoubleSolenoid(1, 6);
 	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
-	Encoder en1 = new Encoder(7, 8);
 
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
-
 	Encoder MM = new Encoder(1, 2);
 	Encoder LT = new Encoder(5, 6);
 	Encoder RT = new Encoder(3, 4);
-	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, en1, t3);
+	
+	Encoder encoderElev = new Encoder(7, 8);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev, talonElev);
 	DigitalInput lBot = new DigitalInput(0);
 	DigitalInput lTop = new DigitalInput(9);
 	int eS = 1;
@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot {
 
 	public void robotInit() {
 		// elev.setAbsoluteTolerance(50);
-
+		
 	}
 
 	public void autonomousInti() {
@@ -87,25 +87,24 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		
 
 		if (autoState == 0) {
-			t1.set(0);
-			t2.set(0);
-			t3.set(0);
+			talonLeft.set(0);
+			talonRight.set(0);
+			talonElev.set(0);
 
 			autoState = 1;
 		}
 		if (autoState == 1 && autoTimer.get() >= .25) {
-			t1.set(-1);
-			t2.set(1);
+			talonLeft.set(-1);
+			talonRight.set(1);
 
 			autoState = 2;
 		}
 		if (autoState == 2 && autoTimer.get() >= 3.75) {
-			t1.set(0);
-			t2.set(0);
-			
+			talonLeft.set(0);
+			talonRight.set(0);
+
 			autoState = 3;
 		}
 		/*
@@ -154,12 +153,11 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 
-		SmartDashboard.putNumber("Elevator Encoder", en1.get());
+		SmartDashboard.putNumber("Elevator Encoder", encoderElev.get());
 
 		if (System.currentTimeMillis() >= print) {
 
-			System.out.println("elevator: " + en1.get());
-
+			System.out.println("elevator: " + encoderElev.get());
 			/*
 			 * System.out.println("test 7: "+test7.get());
 			 * System.out.println("test 8: "+test8.get());
@@ -171,9 +169,9 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (lBot.get() != lastBotState) {
-			int error = en1.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
+			int error = encoderElev.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
 
-			en1.reset();
+			encoderElev.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
 			System.out
@@ -188,7 +186,7 @@ public class Robot extends IterativeRobot {
 		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
 		 * lTop.get();
 		 */
-		
+
 		// Opens claw
 		if (jsGamepad.getRawButton(8) || jsManualClaw.getRawButton(1)) {
 			claw.set(Value.kForward);
@@ -197,69 +195,95 @@ public class Robot extends IterativeRobot {
 		if (jsGamepad.getRawButton(6) || jsManualClaw.getRawButton(4)) {
 			claw.set(Value.kReverse);
 		}
-		// Manual control for elevator 
+		// Manual control for elevator
 		if (jsManualClaw.getRawButton(2)) {
 			elev.disable();
-			t3.set(jsManualClaw.getY());
+			talonElev.set(jsManualClaw.getY());
 			brake.set(Value.kForward);
 		}
 		// Enables omni(H) drive at half speed
-		if (jsRight.getRawButton(7) == true) {
+		if (jsRight.getRawButton(7)) {
 			OD.set(Value.kReverse);
-			oT.set(jsRight.getX() / 2);
-			t1.set(0);
-			t2.set(0);
-			// Full speed omni(H) drive
+			talonOmni.set(jsRight.getX() / 2);
+			talonLeft.set(0);
+			talonRight.set(0);
+			// Enables full speed omni(H) drive
 			if (jsLeft.getRawButton(7)) {
 				OD.set(Value.kReverse);
-				oT.set(jsRight.getX());
-				t1.set(0);
-				t2.set(0);
+				talonOmni.set(jsRight.getX());
+				talonLeft.set(0);
+				talonRight.set(0);
 			}
-		}
-		else {
-			// Standard tank drive 
+		} else {
+			// Standard tank drive
 			OD.set(Value.kForward);
-			oT.set(0);
-			t1.set(jsLeft.getY() * -1);
-			t2.set(jsRight.getY());
+			talonOmni.set(0);
+			talonLeft.set(jsLeft.getY() * -1);
+			talonRight.set(jsRight.getY());
 		}
-		
-		
-		if (jsManualClaw.getRawButton(6)) {
+
+		// Second score pickup position
+		if (jsManualClaw.getRawButton(6) || jsGamepad.getRawButton(1)) {
+			// Disable brakes
+			brake.set(Value.kForward);
+			// Move elevator
 			elev.enable();
 			elev.setSetpoint(ONE_TOTE_SCORE + ENCODER_OFFSET);
-			brake.set(Value.kForward);
+			// Enable brakes
+			brake.set(Value.kReverse);
 		}
-
-		if (jsManualClaw.getRawButton(7)) {
+		// Third pickup position
+		if (jsManualClaw.getRawButton(7) || jsGamepad.getRawButton(2)) {
+			// Disable brakes
+			brake.set(Value.kForward);
+			// Move elevator
 			elev.enable();
 			elev.setSetpoint(MOVE_CONT + ENCODER_OFFSET);
-			brake.set(Value.kForward);
+			// Enable brakes
+			brake.set(Value.kReverse);
 		}
-		if (jsManualClaw.getRawButton(10)) {
+		// Fourth pickup position
+		if (jsManualClaw.getRawButton(10) || jsGamepad.getRawButton(3)) {
+			// Disable brakes
+			brake.set(Value.kForward);
+			// Move elevator
 			elev.enable();
 			elev.setSetpoint(TWO_TOTE_SCORE + ENCODER_OFFSET);
-			brake.set(Value.kForward);
+			// Enable brakes
+			brake.set(Value.kReverse);
 		}
-		if (jsGamepad.getRawButton(2)) {
-			// if (j4.getRawAxis(2) > 0) {
+		// Fifth pickup position
+		if (jsManualClaw.getRawButton(11) || jsGamepad.getRawButton(4)) {
+			// Disable brakes
+			brake.set(Value.kForward);
+			// Move elevator
 			elev.enable();
 			elev.setSetpoint(TOTEFOUR + ENCODER_OFFSET);
-			brake.set(Value.kForward);
+			// Enable brakes
+			brake.set(Value.kReverse);
 		}
-		if (jsManualClaw.getRawButton(11)) {
-			// if (j4.getRawButton(2)) {
+		// First pickup position
+		if (jsManualClaw.getRawButton(12) || jsGamepad.getRawAxis(2) > 0) {
+			// Disable brakes
+			brake.set(Value.kForward);
+			// Move elevator
 			elev.enable();
 			elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
-			brake.set(Value.kForward);
+			// Enable brakes
+			brake.set(Value.kReverse);
 		}
-		if (jsManualClaw.getRawAxis(3) > 0 || jsManualClaw.getRawButton(3)) {
-
+		
+		/*
+		 * 
+		 * Sixth pickup position here
+		 * 
+		 */
+		
+		// Manual enable brakes
+		if (jsManualClaw.getRawButton(3)) {
 			brake.set(Value.kReverse);
 			elev.disable();
-			t3.set(0);
-
+			talonElev.set(0);
 		}
 
 	}
