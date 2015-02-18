@@ -44,6 +44,7 @@ public class Robot extends IterativeRobot {
 	// Encoder MM = new Encoder(1, 2);
 	Encoder LT = new Encoder(1, 2);
 	Encoder RT = new Encoder(3, 4);
+	// Measured drift: 4degrees / min
 	Gyro MG = new Gyro(0);
 
 	Encoder encoderElev = new Encoder(7, 8);
@@ -169,7 +170,10 @@ public class Robot extends IterativeRobot {
 			System.out.println("Top limit switch hit: " + lTop.get());
 			System.out.println("Left encoder " + LT.get());
 			System.out.println("Right encoder " + RT.get());
+			System.out.println("Gyro angle "+ MG.getAngle());
+			System.out.println("Gyro Rate "+ MG.getRate());
 
+			
 			print = System.currentTimeMillis() + 500;
 		}
 
