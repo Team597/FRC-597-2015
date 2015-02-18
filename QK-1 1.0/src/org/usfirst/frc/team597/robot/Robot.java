@@ -223,12 +223,12 @@ public class Robot extends IterativeRobot {
 		// Enables omni(H) drive at half speed
 		if (jsRight.getRawButton(7)) {
 			OD.set(Value.kReverse);
-			talonOmni.set(jsRight.getX() / 1.25);
+			talonOmni.set(jsRight.getX() / 2);
 			talonLeft.set(0);
 			talonRight.set(0);
 			
 			// Gyro code
-			gyroSetpoint = gyro.getAngle();
+			/*gyroSetpoint = gyro.getAngle();
 			if (gyroSetpoint > gyro.getAngle()){
 				talonRight.set(1);
 				if (gyroSetpoint == gyro.getAngle()){
@@ -245,6 +245,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0);
 				talonLeft.set(0);
 			}
+			*/
 			// Enables full speed omni(H) drive
 			if (jsLeft.getRawButton(7)) {
 				OD.set(Value.kReverse);
@@ -253,7 +254,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0);
 				
 				// Gyro code
-				gyroSetpoint = gyro.getAngle();
+				/*gyroSetpoint = gyro.getAngle();
 				if (gyroSetpoint > gyro.getAngle()){
 					talonRight.set(1);
 					if (gyroSetpoint == gyro.getAngle()){
@@ -270,7 +271,7 @@ public class Robot extends IterativeRobot {
 					talonRight.set(0);
 					talonLeft.set(0);
 				}
-				
+				*/
 			}
 		} 
 		else {
@@ -322,7 +323,7 @@ public class Robot extends IterativeRobot {
 			brake.set(Value.kReverse);
 		}
 		// First pickup position
-		if (jsManualClaw.getRawButton(12) || jsGamepad.getRawAxis(2) > 0) {
+		if (jsManualClaw.getRawButton(5) || jsGamepad.getRawAxis(2) > 0) {
 			// Disable brakes
 			brake.set(Value.kForward);
 			// Move elevator
