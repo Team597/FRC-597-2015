@@ -49,7 +49,10 @@ public class Robot extends IterativeRobot {
 	Encoder MM = new Encoder(1, 2);
 	Encoder RT = new Encoder(3, 4);
 	// Measured drift: 4degrees / min
-	Gyro MG = new Gyro(0);
+	Gyro gyro = new Gyro(0);
+	double gyroSetpoint = 0;
+	int turnRight = 0;
+	int turnLeft = 0;
 
 	Encoder encoderElev = new Encoder(7, 8);
 	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
@@ -78,7 +81,10 @@ public class Robot extends IterativeRobot {
 	int maxAutonomous = 10;
 	int autoState = 0;
 	Timer autoTimer;
-
+	
+	
+	
+	
 	public void robotInit() {
 		// elev.setAbsoluteTolerance(50);
 
@@ -175,10 +181,9 @@ public class Robot extends IterativeRobot {
 			System.out.println("Left encoder " + LT.get());
 			System.out.println("Right encoder " + RT.get());
 			System.out.println("omni encoder" + MM.get());
-			System.out.println("Gyro angle "+ MG.getAngle());
-			System.out.println("Gyro Rate "+ MG.getRate());
+			System.out.println("Gyro angle "+ gyro.getAngle());
+			System.out.println("Gyro Rate "+ gyro.getRate());
 
-			
 			print = System.currentTimeMillis() + 500;
 		}
 
@@ -218,21 +223,61 @@ public class Robot extends IterativeRobot {
 		// Enables omni(H) drive at half speed
 		if (jsRight.getRawButton(7)) {
 			OD.set(Value.kReverse);
-			talonOmni.set(jsRight.getX() / 2);
+			talonOmni.set(jsRight.getX() / 1.25);
 			talonLeft.set(0);
 			talonRight.set(0);
+			
+			// Gyro code
+			gyroSetpoint = gyro.getAngle();
+			if (gyroSetpoint > gyro.getAngle()){
+				talonRight.set(1);
+				if (gyroSetpoint == gyro.getAngle()){
+					talonRight.set(0);
+				}
+			}
+			else if (gyroSetpoint < gyro.getAngle()){
+				talonLeft.set(1);
+				if (gyroSetpoint == gyro.getAngle()){
+					talonLeft.set(0);
+				}
+			}
+			else {
+				talonRight.set(0);
+				talonLeft.set(0);
+			}
 			// Enables full speed omni(H) drive
 			if (jsLeft.getRawButton(7)) {
 				OD.set(Value.kReverse);
 				talonOmni.set(jsRight.getX());
 				talonLeft.set(0);
 				talonRight.set(0);
+				
+				// Gyro code
+				gyroSetpoint = gyro.getAngle();
+				if (gyroSetpoint > gyro.getAngle()){
+					talonRight.set(1);
+					if (gyroSetpoint == gyro.getAngle()){
+						talonRight.set(0);
+					}
+				}
+				else if (gyroSetpoint < gyro.getAngle()){
+					talonLeft.set(1);
+					if (gyroSetpoint == gyro.getAngle()){
+						talonLeft.set(0);
+					}
+				}
+				else {
+					talonRight.set(0);
+					talonLeft.set(0);
+				}
+				
 			}
-		} else {
+		} 
+		else {
 			// Standard tank drive
 			OD.set(Value.kForward);
 			talonOmni.set(0);
-			talonLeft.set(jsLeft.getY() * -1);
+			talonLeft.set(jsLeft.getY());
 			talonRight.set(jsRight.getY());
 		}
 
@@ -298,6 +343,7 @@ public class Robot extends IterativeRobot {
 			elev.disable();
 			talonElev.set(0);
 		}
+		
 
 	}
 
