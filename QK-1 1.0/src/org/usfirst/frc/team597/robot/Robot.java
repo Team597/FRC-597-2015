@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
@@ -40,12 +41,14 @@ public class Robot extends IterativeRobot {
 
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
-	Encoder MM = new Encoder(1, 2);
-	Encoder LT = new Encoder(5, 6);
+	// Encoder MM = new Encoder(1, 2);
+	Encoder LT = new Encoder(1, 2);
 	Encoder RT = new Encoder(3, 4);
-	
+	Gyro MG = new Gyro(0);
+
 	Encoder encoderElev = new Encoder(7, 8);
-	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev, talonElev);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
+			talonElev);
 	DigitalInput lBot = new DigitalInput(0);
 	DigitalInput lTop = new DigitalInput(9);
 	int eS = 1;
@@ -73,7 +76,7 @@ public class Robot extends IterativeRobot {
 
 	public void robotInit() {
 		// elev.setAbsoluteTolerance(50);
-		
+
 	}
 
 	public void autonomousInti() {
@@ -164,6 +167,8 @@ public class Robot extends IterativeRobot {
 			 */
 			System.out.println("Bottm limit switch hit: " + lBot.get());
 			System.out.println("Top limit switch hit: " + lTop.get());
+			System.out.println("Left encoder " + LT.get());
+			System.out.println("Right encoder " + RT.get());
 
 			print = System.currentTimeMillis() + 500;
 		}
@@ -272,13 +277,12 @@ public class Robot extends IterativeRobot {
 			// Enable brakes
 			brake.set(Value.kReverse);
 		}
-		
+
 		/*
 		 * 
 		 * Sixth pickup position here
-		 * 
 		 */
-		
+
 		// Manual enable brakes
 		if (jsManualClaw.getRawButton(3)) {
 			brake.set(Value.kReverse);
