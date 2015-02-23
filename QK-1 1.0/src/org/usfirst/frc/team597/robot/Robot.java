@@ -55,8 +55,9 @@ public class Robot extends IterativeRobot {
 	int turnLeft = 0;
 
 	Encoder encoderElev = new Encoder(7, 8);
-	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
-			talonElev);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev, talonElev);
+	PIDController Omni = new PIDController(1/100, 0, -.01, gyro, talonLeft);
+	//PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro, talonRight);
 	DigitalInput lBot = new DigitalInput(0);
 	DigitalInput lTop = new DigitalInput(9);
 	int eS = 1;
@@ -82,7 +83,7 @@ public class Robot extends IterativeRobot {
 	int autoState = 0;
 	Timer autoTimer;
 	
-	
+	double omniAngle = 0;
 	
 	
 	public void robotInit() {
@@ -248,10 +249,17 @@ public class Robot extends IterativeRobot {
 			*/
 			// Enables full speed omni(H) drive
 			if (jsLeft.getRawButton(7)) {
+				omniAngle = gyro.getAngle();
 				OD.set(Value.kReverse);
+				omniAngle = gyro.getAngle();
 				talonOmni.set(jsRight.getX());
 				talonLeft.set(0);
 				talonRight.set(0);
+				
+				Omni.setSetpoint(omniAngle);
+				
+				
+				
 				
 				// Gyro code
 				/*gyroSetpoint = gyro.getAngle();
