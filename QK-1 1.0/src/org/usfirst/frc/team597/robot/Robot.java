@@ -107,6 +107,19 @@ public class Robot extends IterativeRobot {
 	public void autonomousInti() {
 		autoTimer = new Timer();
 		autoChooser = new SendableChooser();
+		
+		autoChooser.addDefault("Default program", new Integer(0));
+		autoChooser.addDefault("Autonomous number 1", new Integer(1));
+		autoChooser.addDefault("Autonomous number 2", new Integer(2));
+		autoChooser.addDefault("Autonomous number 3", new Integer(3));
+		autoChooser.addDefault("Autonomous number 4", new Integer(4));
+		autoChooser.addDefault("Autonomous number 5", new Integer(5));
+		autoChooser.addDefault("Autonomous number 6", new Integer(6));
+		autoChooser.addDefault("Autonomous number 7", new Integer(7));
+		autoChooser.addDefault("Autonomous number 8", new Integer(8));
+		
+		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
+		
 		autoState = 0;
 		elev.disable();
 		autoTimer.start();
