@@ -56,10 +56,12 @@ public class Robot extends IterativeRobot {
 	int turnRight = 0;
 	int turnLeft = 0;
 
+	OmniDrive omni_Drive = new OmniDrive(talonLeft, talonRight);
+
 	Encoder encoderElev = new Encoder(7, 8);
 	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
 			talonElev);
-	PIDController Omni = new PIDController(1 / 100, 0, -.01, gyro, talonLeft);
+	PIDController Omni = new PIDController(1 / 90, 0, 0, gyro, omni_Drive);
 	// PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro,
 	// talonRight);
 	DigitalInput lBot = new DigitalInput(0);
@@ -68,6 +70,8 @@ public class Robot extends IterativeRobot {
 	long print = System.currentTimeMillis();
 
 	boolean lastBotState = false;
+
+	boolean lastGyroState = false;
 
 	// Add this to every setpoint to zero it to the robot
 	// This will subtract a bunch if the encoder was zeroed to the top
@@ -115,6 +119,8 @@ public class Robot extends IterativeRobot {
 		autoChooser.addDefault("Autonomous number 6", new Integer(6));
 		autoChooser.addDefault("Autonomous number 7", new Integer(7));
 		autoChooser.addDefault("Autonomous number 8", new Integer(8));
+		autoChooser.addDefault("Autonomous number 100", new Integer(100));
+		autoChooser.addDefault("Autonomous number 101", new Integer(101));
 
 		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
 
@@ -123,6 +129,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousInti() {
 		autoTimer = new Timer();
 
+		gyro.reset();
 		// Fintan's special don't-crash try block
 		try {
 
@@ -149,7 +156,7 @@ public class Robot extends IterativeRobot {
 		// moves forward
 		// and stops
 		//
-		if (autonomous == 1) {
+		if (autonomous == 1) { // forward mid
 
 			if (autoState == 0) { // does nothing
 				talonLeft.set(0);
@@ -167,6 +174,56 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (autoState == 2 && autoTimer.get() >= 3.75) { // stops
+				talonLeft.set(0);
+				talonRight.set(0);
+
+				autoState = 3;
+			}
+
+		}
+		if (autonomous == 100) {// forward long
+
+			if (autoState == 0) { // does nothing
+				talonLeft.set(0);
+				talonRight.set(0);
+				talonElev.set(0);
+
+				autoState = 1;
+			}
+
+			if (autoState == 1 && autoTimer.get() >= .25) { // moves forward
+				talonLeft.set(1);
+				talonRight.set(1);
+
+				autoState = 2;
+			}
+
+			if (autoState == 2 && autoTimer.get() >= 5.75) { // stops
+				talonLeft.set(0);
+				talonRight.set(0);
+
+				autoState = 3;
+			}
+
+		}
+		if (autonomous == 1) { // forward short
+
+			if (autoState == 101) { // does nothing
+				talonLeft.set(0);
+				talonRight.set(0);
+				talonElev.set(0);
+
+				autoState = 1;
+			}
+
+			if (autoState == 1 && autoTimer.get() >= .25) { // moves forward
+				talonLeft.set(1);
+				talonRight.set(1);
+
+				autoState = 2;
+			}
+
+			if (autoState == 2 && autoTimer.get() >= 1.75) { // stops
 				talonLeft.set(0);
 				talonRight.set(0);
 
@@ -287,7 +344,7 @@ public class Robot extends IterativeRobot {
 		if (autonomous == 5) {
 
 			if (autoState == 0) { // opens claws
-				claw.set(CLAW_OPEN);
+				claw.set(CLAW_CLOSE);
 
 				autoState = 1;
 			}
@@ -620,43 +677,34 @@ public class Robot extends IterativeRobot {
 			talonLeft.set(0);
 			talonRight.set(0);
 
-			// Gyro code
-			/*
-			 * gyroSetpoint = gyro.getAngle(); if (gyroSetpoint >
-			 * gyro.getAngle()){ talonRight.set(1); if (gyroSetpoint ==
-			 * gyro.getAngle()){ talonRight.set(0); } } else if (gyroSetpoint <
-			 * gyro.getAngle()){ talonLeft.set(1); if (gyroSetpoint ==
-			 * gyro.getAngle()){ talonLeft.set(0); } } else { talonRight.set(0);
-			 * talonLeft.set(0); }
-			 */
-			// Enables full speed omni(H) drive
+			Omni.enable();
+
+			if (jsLeft.getRawButton(7) != lastGyroState) {
+				omniAngle = gyro.getAngle();
+
+				Omni.setSetpoint(omniAngle);
+			}
+
 			if (jsLeft.getRawButton(7)) {
-				omniAngle = gyro.getAngle();
 				OD.set(Value.kReverse);
-				omniAngle = gyro.getAngle();
 				talonOmni.set(jsRight.getX());
 				talonLeft.set(0);
 				talonRight.set(0);
 
-				Omni.setSetpoint(omniAngle);
-
-				// Gyro code
-				/*
-				 * gyroSetpoint = gyro.getAngle(); if (gyroSetpoint >
-				 * gyro.getAngle()){ talonRight.set(1); if (gyroSetpoint ==
-				 * gyro.getAngle()){ talonRight.set(0); } } else if
-				 * (gyroSetpoint < gyro.getAngle()){ talonLeft.set(1); if
-				 * (gyroSetpoint == gyro.getAngle()){ talonLeft.set(0); } } else
-				 * { talonRight.set(0); talonLeft.set(0); }
-				 */
 			}
+
 		} else {
 			// Standard tank drive
+			Omni.disable();
+
 			OD.set(Value.kForward);
 			talonOmni.set(0);
+			Omni.disable();
 			talonLeft.set(jsLeft.getY());
 			talonRight.set(jsRight.getY());
 		}
+
+		lastGyroState = jsLeft.getRawButton(7);
 
 		// Second score pickup position
 		if (jsManualClaw.getRawButton(6) || jsGamepad.getRawButton(1)) {
