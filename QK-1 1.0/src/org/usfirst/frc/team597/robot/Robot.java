@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -80,13 +81,13 @@ public class Robot extends IterativeRobot {
 	int TWO_TOTE_SCORE = 1900;
 	int TOTEFOUR = 3000;
 	int TOP = 3800;
-	
+
 	final Value CLAW_CLOSE = Value.kForward;
 	final Value CLAW_OPEN = Value.kReverse;
 
 	final Value BRAKE_ON = Value.kReverse;
 	final Value BRAKE_OFF = Value.kForward;
-	
+
 	final Value OMNI_ON = Value.kReverse;
 	final Value OMNI_OFF = Value.kForward;
 
@@ -94,7 +95,8 @@ public class Robot extends IterativeRobot {
 	int maxAutonomous = 10;
 	int autoState = 0;
 	Timer autoTimer;
-	
+
+	Command autonomousCommand;
 	SendableChooser autoChooser;
 
 	double omniAngle = 0;
@@ -102,12 +104,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		// elev.setAbsoluteTolerance(50);
 
-	}
-
-	public void autonomousInti() {
-		autoTimer = new Timer();
 		autoChooser = new SendableChooser();
-		
+
 		autoChooser.addDefault("Default program", new Integer(0));
 		autoChooser.addDefault("Autonomous number 1", new Integer(1));
 		autoChooser.addDefault("Autonomous number 2", new Integer(2));
@@ -117,9 +115,23 @@ public class Robot extends IterativeRobot {
 		autoChooser.addDefault("Autonomous number 6", new Integer(6));
 		autoChooser.addDefault("Autonomous number 7", new Integer(7));
 		autoChooser.addDefault("Autonomous number 8", new Integer(8));
-		
+
 		SmartDashboard.putData("Autonomous mode chooser", autoChooser);
-		
+
+	}
+
+	public void autonomousInti() {
+		autoTimer = new Timer();
+
+		// Fintan's special don't-crash try block
+		try {
+
+			Integer automode = (Integer) autoChooser.getSelected();
+			autonomous = automode.intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		autoState = 0;
 		elev.disable();
 		autoTimer.start();
