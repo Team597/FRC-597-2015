@@ -661,9 +661,7 @@ public class Robot extends IterativeRobot {
 			encoderElev.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out
-					.println("Botswitch has been RESET :) Error top vs bottom: "
-							+ error);
+			System.out.println("Botswitch has been RESET :) Error top vs bottom: " + error);
 		}
 		lastBotState = lBot.get();
 
@@ -786,7 +784,8 @@ public class Robot extends IterativeRobot {
 			elev.disable();
 			talonElev.set(0);
 		}
-
+		
+		//if the state
 		if (toggleButton != jsGamepad.getRawButton(8) && jsGamepad.getRawButton(8) == true) {
 			toggle = toggle * -1;
 
