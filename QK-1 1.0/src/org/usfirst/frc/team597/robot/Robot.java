@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 	Compressor comp = new Compressor();
 	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
 	DoubleSolenoid claw = new DoubleSolenoid(1, 6);
-	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
+	DoubleSolenoid omniPiston = new DoubleSolenoid(2, 5);
 
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
@@ -47,9 +47,9 @@ public class Robot extends IterativeRobot {
 	// Encoder tests:
 	// L: 1597, 1587, 1586
 	// R: 2303, 2389, 2280
-	Encoder LT = new Encoder(5, 6);
-	Encoder MM = new Encoder(1, 2);
-	Encoder RT = new Encoder(3, 4);
+	Encoder leftTalonEncoder = new Encoder(5, 6);
+	Encoder omniTalonEncoder = new Encoder(1, 2);
+	Encoder rightTalonEncoder = new Encoder(3, 4);
 	// Measured drift: 4degrees / min
 	Gyro gyro = new Gyro(0);
 	double gyroSetpoint = 0;
@@ -58,14 +58,14 @@ public class Robot extends IterativeRobot {
 
 	OmniDrive omni_Drive = new OmniDrive(talonLeft, talonRight);
 
-	Encoder encoderElev = new Encoder(7, 8);
-	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
+	Encoder elevEncoder = new Encoder(7, 8);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, elevEncoder,
 			talonElev);
 	PIDController Omni = new PIDController(1 / 90, 0, 0, gyro, omni_Drive);
 	// PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro,
 	// talonRight);
-	DigitalInput lBot = new DigitalInput(0);
-	DigitalInput lTop = new DigitalInput(9);
+	DigitalInput botLimitSwitch = new DigitalInput(0);
+	DigitalInput topLimitSwitch = new DigitalInput(9);
 	int eS = 1;
 	long print = System.currentTimeMillis();
 
@@ -627,49 +627,49 @@ public class Robot extends IterativeRobot {
 		elevState = 1;
 
 		if (elevState == 1) {
-			if (lBot.get() != lastBotState) {
-				encoderElev.reset();
+			if (botLimitSwitch.get() != lastBotState) {
+				elevEncoder.reset();
 				elev.enable();
 				elevState = 3;
 			}
 		}
-		lastBotState = lBot.get();
+		lastBotState = botLimitSwitch.get();
 
-		SmartDashboard.putNumber("Elevator Encoder", encoderElev.get());
+		SmartDashboard.putNumber("Elevator Encoder", elevEncoder.get());
 
 		if (System.currentTimeMillis() >= print) {
 
-			System.out.println("elevator: " + encoderElev.get());
+			System.out.println("elevator: " + elevEncoder.get());
 			/*
 			 * System.out.println("test 7: "+test7.get());
 			 * System.out.println("test 8: "+test8.get());
 			 */
-			System.out.println("Bottm limit switch hit: " + lBot.get());
-			System.out.println("Top limit switch hit: " + lTop.get());
-			System.out.println("Left encoder " + LT.get());
-			System.out.println("Right encoder " + RT.get());
-			System.out.println("omni encoder" + MM.get());
+			System.out.println("Bottm limit switch hit: " + botLimitSwitch.get());
+			System.out.println("Top limit switch hit: " + topLimitSwitch.get());
+			System.out.println("Left encoder " + leftTalonEncoder.get());
+			System.out.println("Right encoder " + rightTalonEncoder.get());
+			System.out.println("omni encoder" + omniTalonEncoder.get());
 			System.out.println("Gyro angle " + gyro.getAngle());
 			System.out.println("Gyro Rate " + gyro.getRate());
 
 			print = System.currentTimeMillis() + 500;
 		}
 
-		if (lBot.get() != lastBotState) {
-			int error = encoderElev.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
+		if (botLimitSwitch.get() != lastBotState) {
+			int error = elevEncoder.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
 
-			encoderElev.reset();
+			elevEncoder.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
 			System.out.println("Botswitch has been RESET :) Error top vs bottom: " + error);
 		}
-		lastBotState = lBot.get();
+		lastBotState = botLimitSwitch.get();
 
 		/*
-		 * if (lTop.get() != lastTopState) { en1.reset(); elev.disable();
+		 * if (topLimitSwitch.get() != lastTopState) { en1.reset(); elev.disable();
 		 * ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
 		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
-		 * lTop.get();
+		 * topLimitSwitch.get();
 		 */
 
 		// Opens claw
@@ -688,7 +688,7 @@ public class Robot extends IterativeRobot {
 		}
 		// Enables omni(H) drive at half speed
 		if (jsRight.getRawButton(7)) {
-			OD.set(Value.kReverse);
+			omniPiston.set(Value.kReverse);
 			talonOmni.set(jsRight.getX() / 2);
 			talonLeft.set(0);
 			talonRight.set(0);
@@ -702,7 +702,7 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (jsLeft.getRawButton(7)) {
-				OD.set(Value.kReverse);
+				omniPiston.set(Value.kReverse);
 				talonOmni.set(jsRight.getX());
 				talonLeft.set(0);
 				talonRight.set(0);
@@ -713,7 +713,7 @@ public class Robot extends IterativeRobot {
 			// Standard tank drive
 			Omni.disable();
 
-			OD.set(Value.kForward);
+			omniPiston.set(Value.kForward);
 			talonOmni.set(0);
 			Omni.disable();
 			talonLeft.set(jsLeft.getY());
