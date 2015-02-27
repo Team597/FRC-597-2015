@@ -211,8 +211,9 @@ public class Robot extends IterativeRobot {
 				talonRight.set(1);
 				Timer.delay(3);
 				claw.set(CLAW_OPEN);
-				talonLeft.set(0);
-				talonRight.set(0);
+				talonLeft.set(-1);
+				talonRight.set(-1);
+				Timer.delay(0.3);
 				
 				autoTimer.reset();
 		}
