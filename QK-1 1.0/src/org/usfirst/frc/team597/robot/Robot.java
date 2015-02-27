@@ -144,7 +144,8 @@ public class Robot extends IterativeRobot {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
+		autoTimer.reset();
 		autoTimer.start();
 		claw.set(CLAW_OPEN);
 	}
@@ -211,6 +212,8 @@ public class Robot extends IterativeRobot {
 				Timer.delay(3);
 				talonLeft.set(0);
 				talonRight.set(0);
+				
+				autoTimer.reset();
 		}
 
 		// moves forward
