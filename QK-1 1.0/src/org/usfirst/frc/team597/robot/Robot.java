@@ -133,23 +133,20 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInti() {
 		autoTimer = new Timer();
-
 		autoState = 0;
-
+		elev.disable();
 		gyro.reset();
+
 		// Fintan's special don't-crash try block
 		try {
-
 			Integer automode = (Integer) autoChooser.getSelected();
 			autonomous = automode.intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		autoState = 0;
-		elev.disable();
 		autoTimer.start();
-		claw.set(Value.kReverse);
+		claw.set(CLAW_OPEN);
 	}
 
 	/**
@@ -157,13 +154,68 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousPeriodic() {
 
-		if (autonomous == 0) { // does nothing
+		if (autonomous == 1) { // moves from right to left into zone (not over
+								// bump)
+			for (int A = 0; A < 2; A++) {
+				if (autoState == 0) {
+					talonLeft.set(0); // Zeroes values
+					talonRight.set(0);
+					talonElev.set(0);
 
+					autoState = 1;
+				}
+				if (autoState == 1 && autoTimer.get() >= .10) {
+					claw.set(CLAW_CLOSE); // Closes claw
+
+					autoState = 2;
+				}
+				if (autoState == 2 && autoTimer.get() >= .30) {
+					talonElev.set(1); // Picks up tote for
+
+					autoState = 3;
+				}
+				if (autoState == 3 && autoTimer.get() >= .40) {
+					talonElev.set(0); // Stops elev moving
+					brake.set(BRAKE_ON); // Enables brakes
+
+					autoState = 4;
+				}
+				if (autoState == 4 && autoTimer.get() >= .70) {
+					talonLeft.set(0);
+					talonRight.set(0);
+					talonOmni.set(-0.5); // Strafe left
+
+					autoState = 5;
+				}
+				if (autoState == 5 && autoTimer.get() >= 3) {
+					talonOmni.set(0);
+					brake.set(BRAKE_OFF); // Stops brake
+					claw.set(CLAW_OPEN); // Opens claw
+
+					autoState = 6;
+				}
+				if (autoState == 6 && autoTimer.get() >= 5) {
+					talonElev.set(-1); // Lowers claw
+
+					autoState = 7;
+				}
+				if (autoState == 7 && autoTimer.get() >= 7) {
+					talonElev.set(0); // Stops elevator
+
+					autoState = 0;
+				}
+			}
+			
+				talonLeft.set(1);
+				talonRight.set(1);
+				Timer.delay(3);
+				talonLeft.set(0);
+				talonRight.set(0);
 		}
+
 		// moves forward
 		// and stops
-		//
-		if (autonomous == 1) { // forward mid
+		if (autonomous == 2) { // forward mid
 
 			if (autoState == 0) { // does nothing
 				talonLeft.set(0);
@@ -188,7 +240,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 100) {// forward long
+		if (autonomous == 3) {// forward long
 
 			if (autoState == 0) { // does nothing
 				talonLeft.set(0);
@@ -213,7 +265,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 1) { // forward short
+		if (autonomous == 4) { // forward short
 
 			if (autoState == 101) { // does nothing
 				talonLeft.set(0);
@@ -241,7 +293,7 @@ public class Robot extends IterativeRobot {
 		// moves forward
 		// and stops
 		//
-		if (autonomous == 2) {
+		if (autonomous == 5) {
 
 			if (autoState == 0) {
 				talonLeft.set(1);
@@ -259,7 +311,7 @@ public class Robot extends IterativeRobot {
 		// grabs and lifts tote
 		// moves forward and stops
 		//
-		if (autonomous == 3) {
+		if (autonomous == 6) {
 
 			if (autoState == 0) { // closes claw
 				claw.set(CLAW_CLOSE);
@@ -285,7 +337,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0); // stops moving
 			}
 		}
-		if (autonomous == 4) {
+		if (autonomous == 7) {
 
 			if (autoState == 0) {
 				claw.set(CLAW_CLOSE); // opens close
@@ -348,7 +400,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 5) {
+		if (autonomous == 8) {
 
 			if (autoState == 0) { // opens claws
 				claw.set(CLAW_CLOSE);
@@ -411,7 +463,7 @@ public class Robot extends IterativeRobot {
 
 			}
 		}
-		if (autonomous == 6) {
+		if (autonomous == 9) {
 
 			if (autoState == 0) {
 				claw.set(Value.kReverse); // opens claw
@@ -483,7 +535,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0); // stops moving
 			}
 		}
-		if (autonomous == 7) {
+		if (autonomous == 10) {
 
 			if (autoState == 0) {
 				claw.set(Value.kReverse);
@@ -644,7 +696,8 @@ public class Robot extends IterativeRobot {
 			 * System.out.println("test 7: "+test7.get());
 			 * System.out.println("test 8: "+test8.get());
 			 */
-			System.out.println("Bottm limit switch hit: " + botLimitSwitch.get());
+			System.out.println("Bottm limit switch hit: "
+					+ botLimitSwitch.get());
 			System.out.println("Top limit switch hit: " + topLimitSwitch.get());
 			System.out.println("Left encoder " + leftTalonEncoder.get());
 			System.out.println("Right encoder " + rightTalonEncoder.get());
@@ -661,13 +714,15 @@ public class Robot extends IterativeRobot {
 			elevEncoder.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out.println("Botswitch has been RESET :) Error top vs bottom: " + error);
+			System.out
+					.println("Botswitch has been RESET :) Error top vs bottom: "
+							+ error);
 		}
 		lastBotState = botLimitSwitch.get();
 
 		/*
-		 * if (topLimitSwitch.get() != lastTopState) { en1.reset(); elev.disable();
-		 * ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
+		 * if (topLimitSwitch.get() != lastTopState) { en1.reset();
+		 * elev.disable(); ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
 		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
 		 * topLimitSwitch.get();
 		 */
@@ -784,9 +839,10 @@ public class Robot extends IterativeRobot {
 			elev.disable();
 			talonElev.set(0);
 		}
-		
-		//if the state
-		if (toggleButton != jsGamepad.getRawButton(8) && jsGamepad.getRawButton(8) == true) {
+
+		// if the state
+		if (toggleButton != jsGamepad.getRawButton(8)
+				&& jsGamepad.getRawButton(8) == true) {
 			toggle = toggle * -1;
 
 		}
