@@ -69,6 +69,8 @@ public class Robot extends IterativeRobot {
 	int eS = 1;
 	long print = System.currentTimeMillis();
 
+	int elevState = 0;
+
 	boolean lastBotState = false;
 
 	boolean lastGyroState = false;
@@ -94,6 +96,9 @@ public class Robot extends IterativeRobot {
 
 	final Value OMNI_ON = Value.kReverse;
 	final Value OMNI_OFF = Value.kForward;
+
+	boolean toggleButton = false;
+	int toggle = 1;
 
 	int autonomous = 0;
 	int maxAutonomous = 10;
@@ -128,6 +133,8 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInti() {
 		autoTimer = new Timer();
+
+		autoState = 0;
 
 		gyro.reset();
 		// Fintan's special don't-crash try block
@@ -616,6 +623,17 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+		toggle = 1;
+		elevState = 1;
+
+		if (elevState == 1) {
+			if (lBot.get() != lastBotState) {
+				encoderElev.reset();
+				elev.enable();
+				elevState = 3;
+			}
+		}
+		lastBotState = lBot.get();
 
 		SmartDashboard.putNumber("Elevator Encoder", encoderElev.get());
 
@@ -767,6 +785,21 @@ public class Robot extends IterativeRobot {
 			brake.set(Value.kReverse);
 			elev.disable();
 			talonElev.set(0);
+		}
+
+		if (toggleButton != jsGamepad.getRawButton(8) && jsGamepad.getRawButton(8) == true) {
+			toggle = toggle * -1;
+
+		}
+		toggleButton = jsGamepad.getRawButton(8);
+
+		if (toggle == 1) {
+			claw.set(CLAW_CLOSE);
+
+		}
+
+		if (toggle == -1) {
+			claw.set(CLAW_OPEN);
 		}
 
 	}
