@@ -537,100 +537,8 @@ public class Robot extends IterativeRobot {
 				talonLeft.set(0);
 				talonRight.set(0); // stops moving
 			}
-		}
-		if (autonomous == 10) {
+		
 
-			if (autoState == 0) {
-				claw.set(Value.kReverse);
-
-				autoState = 1;
-			}
-
-			if (autoState == 1 && autoTimer.get() >= 0.3) {
-				elev.setSetpoint(MOVE_CONT); // opens elevator
-
-				autoState = 2;
-			}
-
-			if (autoState == 2 && autoTimer.get() >= 1.3) {
-				talonLeft.set(1);
-				talonRight.set(1);
-
-				autoState = 3;
-			}
-
-			if (autoState == 3 && autoTimer.get() >= 2.3) {
-				talonOmni.set(-1);
-
-				autoState = 4;
-			}
-
-			if (autoState == 4 && autoTimer.get() >= 4.3) {
-				claw.set(Value.kForward);
-				autoState = 5;
-			}
-
-			if (autoState == 5 && autoTimer.get() >= 4.6) {
-
-				talonLeft.set(1);
-				talonRight.set(1);
-
-				autoState = 6;
-			}
-
-			if (autoState == 6 && autoTimer.get() >= 5.6) {
-				claw.set(Value.kReverse);
-
-				autoState = 7;
-			}
-			if (autoState == 7 && autoTimer.get() > 5.9) {
-				elev.setSetpoint(MOVE_CONT);
-
-				autoState = 8;
-			}
-
-			if (autoState == 8 && autoTimer.get() >= 6.9) {
-				talonLeft.set(-1);
-				talonRight.set(-1);
-
-				autoState = 9;
-			}
-			if (autoState == 9 && autoTimer.get() >= 7.9) {
-				talonOmni.set(-1);
-
-				autoState = 10;
-			}
-
-			if (autoState == 10 && autoTimer.get() >= 9.9) {
-				claw.set(Value.kForward);
-				autoState = 11;
-			}
-			if (autoState == 11 && autoTimer.get() >= 10.2) {
-				talonLeft.set(1);
-				talonRight.set(1);
-
-				autoState = 12;
-			}
-			if (autoState == 12 && autoTimer.get() >= 11.2) {
-				claw.set(Value.kReverse);
-
-				autoState = 13;
-			}
-			if (autoState == 13 && autoTimer.get() >= 11.5) {
-				elev.setSetpoint(MOVE_CONT);
-
-				autoState = 14;
-			}
-			if (autoState == 14 && autoTimer.get() >= 12.5) {
-				talonLeft.set(1);
-				talonRight.set(1);
-
-				autoState = 15;
-			}
-			if (autoState == 15 && autoTimer.get() >= 14) {
-				talonLeft.set(0);
-				talonRight.set(0);
-			}
 		}
 	}
 
@@ -678,7 +586,6 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-		toggle = 1;
 		elevState = 1;
 
 		if (elevState == 1) {
