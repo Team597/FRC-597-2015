@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 	Compressor comp = new Compressor();
 	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
 	DoubleSolenoid claw = new DoubleSolenoid(1, 6);
-	DoubleSolenoid OD = new DoubleSolenoid(2, 5);
+	DoubleSolenoid omniPiston = new DoubleSolenoid(2, 5);
 
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
@@ -47,9 +47,9 @@ public class Robot extends IterativeRobot {
 	// Encoder tests:
 	// L: 1597, 1587, 1586
 	// R: 2303, 2389, 2280
-	Encoder LT = new Encoder(5, 6);
-	Encoder MM = new Encoder(1, 2);
-	Encoder RT = new Encoder(3, 4);
+	Encoder leftTalonEncoder = new Encoder(5, 6);
+	Encoder omniTalonEncoder = new Encoder(1, 2);
+	Encoder rightTalonEncoder = new Encoder(3, 4);
 	// Measured drift: 4degrees / min
 	Gyro gyro = new Gyro(0);
 	double gyroSetpoint = 0;
@@ -58,14 +58,14 @@ public class Robot extends IterativeRobot {
 
 	OmniDrive omni_Drive = new OmniDrive(talonLeft, talonRight);
 
-	Encoder encoderElev = new Encoder(7, 8);
-	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, encoderElev,
+	Encoder elevEncoder = new Encoder(7, 8);
+	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, elevEncoder,
 			talonElev);
 	PIDController Omni = new PIDController(1 / 90, 0, 0, gyro, omni_Drive);
 	// PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro,
 	// talonRight);
-	DigitalInput lBot = new DigitalInput(0);
-	DigitalInput lTop = new DigitalInput(9);
+	DigitalInput botLimitSwitch = new DigitalInput(0);
+	DigitalInput topLimitSwitch = new DigitalInput(9);
 	int eS = 1;
 	long print = System.currentTimeMillis();
 
@@ -133,23 +133,20 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousInti() {
 		autoTimer = new Timer();
-
 		autoState = 0;
-
+		elev.disable();
 		gyro.reset();
+
 		// Fintan's special don't-crash try block
 		try {
-
 			Integer automode = (Integer) autoChooser.getSelected();
 			autonomous = automode.intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		autoState = 0;
-		elev.disable();
 		autoTimer.start();
-		claw.set(Value.kReverse);
+		claw.set(CLAW_OPEN);
 	}
 
 	/**
@@ -157,13 +154,68 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousPeriodic() {
 
-		if (autonomous == 0) { // does nothing
+		if (autonomous == 1) { // moves from right to left into zone (not over
+								// bump)
+			for (int A = 0; A < 2; A++) {
+				if (autoState == 0) {
+					talonLeft.set(0); // Zeroes values
+					talonRight.set(0);
+					talonElev.set(0);
 
+					autoState = 1;
+				}
+				if (autoState == 1 && autoTimer.get() >= .10) {
+					claw.set(CLAW_CLOSE); // Closes claw
+
+					autoState = 2;
+				}
+				if (autoState == 2 && autoTimer.get() >= .30) {
+					talonElev.set(1); // Picks up tote for
+
+					autoState = 3;
+				}
+				if (autoState == 3 && autoTimer.get() >= .40) {
+					talonElev.set(0); // Stops elev moving
+					brake.set(BRAKE_ON); // Enables brakes
+
+					autoState = 4;
+				}
+				if (autoState == 4 && autoTimer.get() >= .70) {
+					talonLeft.set(0);
+					talonRight.set(0);
+					talonOmni.set(-0.5); // Strafe left
+
+					autoState = 5;
+				}
+				if (autoState == 5 && autoTimer.get() >= 3) {
+					talonOmni.set(0);
+					brake.set(BRAKE_OFF); // Stops brake
+					claw.set(CLAW_OPEN); // Opens claw
+
+					autoState = 6;
+				}
+				if (autoState == 6 && autoTimer.get() >= 5) {
+					talonElev.set(-1); // Lowers claw
+
+					autoState = 7;
+				}
+				if (autoState == 7 && autoTimer.get() >= 7) {
+					talonElev.set(0); // Stops elevator
+
+					autoState = 0;
+				}
+			}
+			
+				talonLeft.set(1);
+				talonRight.set(1);
+				Timer.delay(3);
+				talonLeft.set(0);
+				talonRight.set(0);
 		}
+
 		// moves forward
 		// and stops
-		//
-		if (autonomous == 1) { // forward mid
+		if (autonomous == 2) { // forward mid
 
 			if (autoState == 0) { // does nothing
 				talonLeft.set(0);
@@ -188,7 +240,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 100) {// forward long
+		if (autonomous == 3) {// forward long
 
 			if (autoState == 0) { // does nothing
 				talonLeft.set(0);
@@ -213,7 +265,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 1) { // forward short
+		if (autonomous == 4) { // forward short
 
 			if (autoState == 101) { // does nothing
 				talonLeft.set(0);
@@ -241,7 +293,7 @@ public class Robot extends IterativeRobot {
 		// moves forward
 		// and stops
 		//
-		if (autonomous == 2) {
+		if (autonomous == 5) {
 
 			if (autoState == 0) {
 				talonLeft.set(1);
@@ -259,7 +311,7 @@ public class Robot extends IterativeRobot {
 		// grabs and lifts tote
 		// moves forward and stops
 		//
-		if (autonomous == 3) {
+		if (autonomous == 6) {
 
 			if (autoState == 0) { // closes claw
 				claw.set(CLAW_CLOSE);
@@ -285,7 +337,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0); // stops moving
 			}
 		}
-		if (autonomous == 4) {
+		if (autonomous == 7) {
 
 			if (autoState == 0) {
 				claw.set(CLAW_CLOSE); // opens close
@@ -348,7 +400,7 @@ public class Robot extends IterativeRobot {
 			}
 
 		}
-		if (autonomous == 5) {
+		if (autonomous == 8) {
 
 			if (autoState == 0) { // opens claws
 				claw.set(CLAW_CLOSE);
@@ -411,7 +463,7 @@ public class Robot extends IterativeRobot {
 
 			}
 		}
-		if (autonomous == 6) {
+		if (autonomous == 9) {
 
 			if (autoState == 0) {
 				claw.set(Value.kReverse); // opens claw
@@ -483,7 +535,7 @@ public class Robot extends IterativeRobot {
 				talonRight.set(0); // stops moving
 			}
 		}
-		if (autonomous == 7) {
+		if (autonomous == 10) {
 
 			if (autoState == 0) {
 				claw.set(CLAW_CLOSE);
@@ -665,49 +717,52 @@ public class Robot extends IterativeRobot {
 		elevState = 1;
 
 		if (elevState == 1) {
-			if (lBot.get() != lastBotState) {
-				encoderElev.reset();
+			if (botLimitSwitch.get() != lastBotState) {
+				elevEncoder.reset();
 				elev.enable();
 				elevState = 3;
 			}
 		}
-		lastBotState = lBot.get();
+		lastBotState = botLimitSwitch.get();
 
-		SmartDashboard.putNumber("Elevator Encoder", encoderElev.get());
+		SmartDashboard.putNumber("Elevator Encoder", elevEncoder.get());
 
 		if (System.currentTimeMillis() >= print) {
 
-			System.out.println("elevator: " + encoderElev.get());
+			System.out.println("elevator: " + elevEncoder.get());
 			/*
 			 * System.out.println("test 7: "+test7.get());
 			 * System.out.println("test 8: "+test8.get());
 			 */
-			System.out.println("Bottm limit switch hit: " + lBot.get());
-			System.out.println("Top limit switch hit: " + lTop.get());
-			System.out.println("Left encoder " + LT.get());
-			System.out.println("Right encoder " + RT.get());
-			System.out.println("omni encoder" + MM.get());
+			System.out.println("Bottm limit switch hit: "
+					+ botLimitSwitch.get());
+			System.out.println("Top limit switch hit: " + topLimitSwitch.get());
+			System.out.println("Left encoder " + leftTalonEncoder.get());
+			System.out.println("Right encoder " + rightTalonEncoder.get());
+			System.out.println("omni encoder" + omniTalonEncoder.get());
 			System.out.println("Gyro angle " + gyro.getAngle());
 			System.out.println("Gyro Rate " + gyro.getRate());
 
 			print = System.currentTimeMillis() + 500;
 		}
 
-		if (lBot.get() != lastBotState) {
-			int error = encoderElev.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
+		if (botLimitSwitch.get() != lastBotState) {
+			int error = elevEncoder.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
 
-			encoderElev.reset();
+			elevEncoder.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out.println("Botswitch has been RESET :) Error top vs bottom: " + error);
+			System.out
+					.println("Botswitch has been RESET :) Error top vs bottom: "
+							+ error);
 		}
-		lastBotState = lBot.get();
+		lastBotState = botLimitSwitch.get();
 
 		/*
-		 * if (lTop.get() != lastTopState) { en1.reset(); elev.disable();
-		 * ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
+		 * if (topLimitSwitch.get() != lastTopState) { en1.reset();
+		 * elev.disable(); ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
 		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
-		 * lTop.get();
+		 * topLimitSwitch.get();
 		 */
 
 		// Opens claw
@@ -726,7 +781,7 @@ public class Robot extends IterativeRobot {
 		}
 		// Enables omni(H) drive at half speed
 		if (jsRight.getRawButton(7)) {
-			OD.set(Value.kReverse);
+			omniPiston.set(Value.kReverse);
 			talonOmni.set(jsRight.getX() / 2);
 			talonLeft.set(0);
 			talonRight.set(0);
@@ -740,7 +795,7 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (jsLeft.getRawButton(7)) {
-				OD.set(Value.kReverse);
+				omniPiston.set(Value.kReverse);
 				talonOmni.set(jsRight.getX());
 				talonLeft.set(0);
 				talonRight.set(0);
@@ -751,7 +806,7 @@ public class Robot extends IterativeRobot {
 			// Standard tank drive
 			Omni.disable();
 
-			OD.set(Value.kForward);
+			omniPiston.set(Value.kForward);
 			talonOmni.set(0);
 			Omni.disable();
 			talonLeft.set(jsLeft.getY());
@@ -822,9 +877,10 @@ public class Robot extends IterativeRobot {
 			elev.disable();
 			talonElev.set(0);
 		}
-		
-		//if the state
-		if (toggleButton != jsGamepad.getRawButton(8) && jsGamepad.getRawButton(8) == true) {
+
+		// if the state
+		if (toggleButton != jsGamepad.getRawButton(8)
+				&& jsGamepad.getRawButton(8) == true) {
 			toggle = toggle * -1;
 
 		}
