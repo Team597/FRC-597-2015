@@ -562,7 +562,7 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (autoState == 3 && autoTimer.get() >= 2.4) {
-				OD.set(OMNI_ON);
+				omniPiston.set(OMNI_ON);
 				
 				autoState = 4;
 			}
@@ -614,7 +614,7 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (autoState == 11 && autoTimer.get() >= 8.4) {
-				OD.set(OMNI_ON);
+				omniPiston.set(OMNI_ON);
 				
 				autoState = 12;
 			}
@@ -650,6 +650,7 @@ public class Robot extends IterativeRobot {
 
 			if (autoState == 17 && autoTimer.get() >= 11.8) {
 				talonElev.set(1);
+				omniPiston.set(OMNI_OFF);
 
 				autoState = 18;
 			}
