@@ -486,96 +486,134 @@ public class Robot extends IterativeRobot {
 		if (autonomous == 7) {
 
 			if (autoState == 0) {
-				claw.set(Value.kReverse);
-
+				claw.set(CLAW_CLOSE);
+				brake.set(BRAKE_OFF);
+				
 				autoState = 1;
 			}
 
 			if (autoState == 1 && autoTimer.get() >= 0.3) {
-				elev.setSetpoint(MOVE_CONT); // opens elevator
+				talonElev.set(1);
 
 				autoState = 2;
 			}
 
-			if (autoState == 2 && autoTimer.get() >= 1.3) {
-				talonLeft.set(1);
-				talonRight.set(1);
+			if (autoState == 2 && autoTimer.get() >= 2.3){
+				brake.set(BRAKE_ON);
+				omniAngle = gyro.getAngle();
+				
+				Omni.enable();
 
+				Omni.setSetpoint(omniAngle);
+				
 				autoState = 3;
 			}
 
-			if (autoState == 3 && autoTimer.get() >= 2.3) {
-				talonOmni.set(-1);
-
+			if (autoState == 3 && autoTimer.get() >= 2.4) {
+				OD.set(OMNI_ON);
+				
 				autoState = 4;
 			}
 
-			if (autoState == 4 && autoTimer.get() >= 4.3) {
-				claw.set(Value.kForward);
+			if (autoState == 4 && autoTimer.get() >= 2.6) {
+				talonOmni.set(.75);
+				
 				autoState = 5;
 			}
 
-			if (autoState == 5 && autoTimer.get() >= 4.6) {
-
-				talonLeft.set(1);
-				talonRight.set(1);
+			if (autoState == 5 && autoTimer.get() >= 3.6) {
+				Omni.disable();
 
 				autoState = 6;
 			}
 
-			if (autoState == 6 && autoTimer.get() >= 5.6) {
-				claw.set(Value.kReverse);
-
+			if (autoState == 6 && autoTimer.get() >= 3.7) {
+				claw.set(CLAW_OPEN);
+				brake.set(BRAKE_OFF);
+				
 				autoState = 7;
 			}
-			if (autoState == 7 && autoTimer.get() > 5.9) {
-				elev.setSetpoint(MOVE_CONT);
+			if (autoState == 7 && autoTimer.get() >= 3.8) {
+				talonElev.set(-1);
 
 				autoState = 8;
 			}
-
-			if (autoState == 8 && autoTimer.get() >= 6.9) {
-				talonLeft.set(-1);
-				talonRight.set(-1);
-
+			if (autoState == 8 && autoTimer.get() >= 5.7) {
+				claw.set(CLAW_CLOSE);
+				
 				autoState = 9;
 			}
-			if (autoState == 9 && autoTimer.get() >= 7.9) {
-				talonOmni.set(-1);
+
+			if (autoState == 9 && autoTimer.get() >= 6.0) {
+				talonElev.set(1);
 
 				autoState = 10;
 			}
 
-			if (autoState == 10 && autoTimer.get() >= 9.9) {
-				claw.set(Value.kForward);
+			if (autoState == 10 && autoTimer.get() >= 8.3){
+				brake.set(BRAKE_ON);
+				omniAngle = gyro.getAngle();
+				
+				Omni.enable();
+
+				Omni.setSetpoint(omniAngle);
+				
 				autoState = 11;
 			}
-			if (autoState == 11 && autoTimer.get() >= 10.2) {
-				talonLeft.set(1);
-				talonRight.set(1);
 
+			if (autoState == 11 && autoTimer.get() >= 8.4) {
+				OD.set(OMNI_ON);
+				
 				autoState = 12;
 			}
-			if (autoState == 12 && autoTimer.get() >= 11.2) {
-				claw.set(Value.kReverse);
 
+			if (autoState == 12 && autoTimer.get() >= 8.6) {
+				talonOmni.set(.75);
+				
 				autoState = 13;
 			}
-			if (autoState == 13 && autoTimer.get() >= 11.5) {
-				elev.setSetpoint(MOVE_CONT);
+			
+			if (autoState == 13 && autoTimer.get() >= 10.6) {
+				Omni.disable();
 
 				autoState = 14;
 			}
-			if (autoState == 14 && autoTimer.get() >= 12.5) {
+
+			if (autoState == 6 && autoTimer.get() >= 10.7) {
+				claw.set(CLAW_OPEN);
+				brake.set(BRAKE_OFF);
+				
+				autoState = 7;
+			}
+			if (autoState == 15 && autoTimer.get() >= 10.8) {
+				talonElev.set(-1);
+
+				autoState = 16;
+			}
+			if (autoState == 16 && autoTimer.get() >= 11.7) {
+				claw.set(CLAW_CLOSE);
+				
+				autoState = 17;
+			}
+
+			if (autoState == 17 && autoTimer.get() >= 11.8) {
+				talonElev.set(1);
+
+				autoState = 18;
+			}
+			
+			if(autoState == 18 && autoTimer.get() >= 12.8 ){
 				talonLeft.set(1);
 				talonRight.set(1);
-
-				autoState = 15;
+				
+				autoState = 19;
 			}
-			if (autoState == 15 && autoTimer.get() >= 14) {
+			if(autoState == 19 && autoTimer.get() >= 15.0){
 				talonLeft.set(0);
 				talonRight.set(0);
+				
 			}
+
 		}
 	}
 
