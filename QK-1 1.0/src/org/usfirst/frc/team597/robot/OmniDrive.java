@@ -16,9 +16,9 @@ public class OmniDrive implements PIDOutput {
 	public void pidWrite(double output) {
 		// TODO Auto-generated method stub
 		
-		talonLeft.set(output);
-		talonRight.set(output * -1);
-	}
+		talonLeft.set(output * -1);
+		talonRight.set(output );
+		}
 
 	
 }
