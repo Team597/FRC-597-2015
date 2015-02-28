@@ -414,6 +414,8 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+		
+		claw.teleopPeriodic();
 
 		SmartDashboard.putNumber("Elevator Encoder", elevEncoder.get());
 
