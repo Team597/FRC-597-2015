@@ -41,10 +41,10 @@ public class Robot extends IterativeRobot {
 	Talon talonElev = new Talon(3);
 	Compressor comp = new Compressor();
 	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
-	DoubleSolenoid claw = new DoubleSolenoid(1, 6);
 	DoubleSolenoid omniPiston = new DoubleSolenoid(2, 5);
 	CameraServer server;
-
+	
+	Claw claw = new Claw(jsGamepad);
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
 
@@ -92,8 +92,6 @@ public class Robot extends IterativeRobot {
 	int FOUR_TOTE = 3000;
 	int TOP_TOTE = 3800;
 
-	final Value CLAW_CLOSE = Value.kForward;
-	final Value CLAW_OPEN = Value.kReverse;
 
 	final Value BRAKE_ON = Value.kReverse;
 	final Value BRAKE_OFF = Value.kForward;
@@ -101,8 +99,7 @@ public class Robot extends IterativeRobot {
 	final Value OMNI_ON = Value.kReverse;
 	final Value OMNI_OFF = Value.kForward;
 
-	boolean toggleButton = false;
-	boolean toggleClaw = false;
+
 
 	int autonomous = 0;
 	int maxAutonomous = 10;
@@ -593,19 +590,7 @@ public class Robot extends IterativeRobot {
 
 		// if the state
 
-		if (toggleButton != jsGamepad.getRawButton(5)
-				&& jsGamepad.getRawButton(5) == true) {
-			toggleClaw = !toggleClaw;
-		}
 
-		if (toggleClaw == false) {
-			claw.set(CLAW_CLOSE);
-		}
-		if (toggleClaw == true) {
-			claw.set(CLAW_OPEN);
-		}
-
-		toggleButton = jsGamepad.getRawButton(5);
 
 		if (jsGamepad.getRawAxis(3) > 0) {
 			// Manual control for elevator
