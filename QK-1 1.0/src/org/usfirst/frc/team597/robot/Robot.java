@@ -43,7 +43,7 @@ public class Robot extends IterativeRobot {
 	DoubleSolenoid brake = new DoubleSolenoid(0, 7);
 	DoubleSolenoid omniPiston = new DoubleSolenoid(2, 5);
 	CameraServer server;
-	
+
 	Claw claw = new Claw(jsGamepad);
 	// DigitalInput test7 = new DigitalInput(7);
 	// DigitalInput test8 = new DigitalInput(8);
@@ -92,14 +92,11 @@ public class Robot extends IterativeRobot {
 	int FOUR_TOTE = 3000;
 	int TOP_TOTE = 3800;
 
-
 	final Value BRAKE_ON = Value.kReverse;
 	final Value BRAKE_OFF = Value.kForward;
 
 	final Value OMNI_ON = Value.kReverse;
 	final Value OMNI_OFF = Value.kForward;
-
-
 
 	int autonomous = 0;
 	int maxAutonomous = 10;
@@ -161,260 +158,36 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		
+		double y = 1; // time from one tote to the next
+
 		talonLeft.set(.75);
 		talonRight.set(.75);
 		Timer.delay(1);
 		talonLeft.set(0);
 		talonRight.set(0);
 		Timer.delay(.01);
-		/*
-		 * 
-		 * if (autonomous == 1) { // moves from right to left into zone (not
-		 * over // bump) for (int A = 0; A < 2; A++) { if (autoState == 0) {
-		 * talonLeft.set(0); // Zeroes values talonRight.set(0);
-		 * talonElev.set(0);
-		 * 
-		 * autoState = 1; } if (autoState == 1 && autoTimer.get() >= .10) {
-		 * claw.set(CLAW_CLOSE); // Closes claw
-		 * 
-		 * autoState = 2; } if (autoState == 2 && autoTimer.get() >= .30) {
-		 * talonElev.set(1); // Picks up tote for
-		 * 
-		 * autoState = 3; } if (autoState == 3 && autoTimer.get() >= .40) {
-		 * talonElev.set(0); // Stops elev moving brake.set(BRAKE_ON); //
-		 * Enables brakes
-		 * 
-		 * autoState = 4; } if (autoState == 4 && autoTimer.get() >= .70) {
-		 * talonLeft.set(0); talonRight.set(0); talonOmni.set(-0.5); // Strafe
-		 * left
-		 * 
-		 * autoState = 5; } if (autoState == 5 && autoTimer.get() >= 3) {
-		 * talonOmni.set(0); brake.set(BRAKE_OFF); // Stops brake
-		 * claw.set(CLAW_OPEN); // Opens claw
-		 * 
-		 * autoState = 6; } if (autoState == 6 && autoTimer.get() >= 5) {
-		 * talonElev.set(-1); // Lowers claw
-		 * 
-		 * autoState = 7; } if (autoState == 7 && autoTimer.get() >= 7) {
-		 * talonElev.set(0); // Stops elevator
-		 * 
-		 * autoState = 0; } }
-		 * 
-		 * talonLeft.set(1); talonRight.set(1); Timer.delay(3);
-		 * talonLeft.set(0); talonRight.set(0); }
-		 * 
-		 * // moves forward // and stops if (autonomous == 2) { // forward mid
-		 * 
-		 * if (autoState == 0) { // does nothing talonLeft.set(0);
-		 * talonRight.set(0); talonElev.set(0);
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= .25) { // moves forward
-		 * talonLeft.set(1); talonRight.set(1);
-		 * 
-		 * autoState = 2; }
-		 * 
-		 * if (autoState == 2 && autoTimer.get() >= 3.75) { // stops
-		 * talonLeft.set(0); talonRight.set(0);
-		 * 
-		 * autoState = 3; }
-		 * 
-		 * } if (autonomous == 3) {// forward long
-		 * 
-		 * if (autoState == 0) { // does nothing talonLeft.set(0);
-		 * talonRight.set(0); talonElev.set(0);
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= .25) { // moves forward
-		 * talonLeft.set(1); talonRight.set(1);
-		 * 
-		 * autoState = 2; }
-		 * 
-		 * if (autoState == 2 && autoTimer.get() >= 5.75) { // stops
-		 * talonLeft.set(0); talonRight.set(0);
-		 * 
-		 * autoState = 3; }
-		 * 
-		 * } if (autonomous == 4) { // forward short
-		 * 
-		 * if (autoState == 101) { // does nothing talonLeft.set(0);
-		 * talonRight.set(0); talonElev.set(0);
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= .25) { // moves forward
-		 * talonLeft.set(1); talonRight.set(1);
-		 * 
-		 * autoState = 2; }
-		 * 
-		 * if (autoState == 2 && autoTimer.get() >= 1.75) { // stops
-		 * talonLeft.set(0); talonRight.set(0);
-		 * 
-		 * autoState = 3; }
-		 * 
-		 * } // moves forward // and stops // if (autonomous == 5) {
-		 * 
-		 * if (autoState == 0) { talonLeft.set(1); talonRight.set(1); // moves
-		 * forward
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= 3) { talonLeft.set(0);
-		 * talonRight.set(0); // stops moving } }
-		 * 
-		 * // grabs and lifts tote // moves forward and stops // if (autonomous
-		 * == 6) {
-		 * 
-		 * if (autoState == 0) { // closes claw claw.set(CLAW_CLOSE); autoState
-		 * = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= 0.3) { talonElev.set(1); //
-		 * lifts elevator
-		 * 
-		 * autoState = 2; } if (autoState == 2 && autoTimer.get() >= 1.3) {
-		 * talonElev.set(0); brake.set(BRAKE_ON);
-		 * 
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 3; } if (autoState == 3 && autoTimer.get() >= 2.3) {
-		 * talonLeft.set(0); talonRight.set(0); // stops moving } } if
-		 * (autonomous == 7) {
-		 * 
-		 * if (autoState == 0) { claw.set(CLAW_CLOSE); // opens close
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= 0.3) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts toe
-		 * 
-		 * autoState = 2; } if (autoState == 2 && autoTimer.get() >= 1.3) {
-		 * talonLeft.set(-1); talonRight.set(-1); // moves back
-		 * 
-		 * autoState = 3; } if (autoState == 3 && autoTimer.get() >= 2.3) {
-		 * talonOmni.set(-1); // moves left autoState = 4; }
-		 * 
-		 * if (autoState == 4 && autoTimer.get() >= 4.3) { claw.set(CLAW_OPEN);
-		 * autoState = 5; } if (autoState == 5 && autoTimer.get() >= 4.6) {
-		 * elev.setSetpoint(PICKUP_TOTE); // lowers elevator
-		 * 
-		 * autoState = 6; } if (autoState == 6 && autoTimer.get() >= 5.6) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 7; }
-		 * 
-		 * if (autoState == 7 && autoTimer.get() >= 6.6) {
-		 * claw.set(Value.kReverse); // opens claws
-		 * 
-		 * autoState = 8; } if (autoState == 8 && autoTimer.get() >= 6.9) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts elevator
-		 * 
-		 * autoState = 9; } if (autoState == 9 && autoTimer.get() >= 7.9) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 10; }
-		 * 
-		 * if (autoState == 10 && autoTimer.get() >= 8.9) { talonLeft.set(0);
-		 * talonRight.set(0); // stops moving }
-		 * 
-		 * } if (autonomous == 8) {
-		 * 
-		 * if (autoState == 0) { // opens claws claw.set(CLAW_CLOSE);
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= 0.3) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts elevator
-		 * 
-		 * autoState = 2; } if (autoState == 2 && autoTimer.get() >= 1.3) {
-		 * talonLeft.set(-1); talonRight.set(-1); // moves back
-		 * 
-		 * autoState = 3; } if (autoState == 3 && autoTimer.get() >= 2.3) {
-		 * talonOmni.set(1); // moves Right
-		 * 
-		 * autoState = 4; } if (autoState == 4 && autoTimer.get() >= 4.3) {
-		 * claw.set(Value.kForward); // closes claw
-		 * 
-		 * autoState = 5; } if (autoState == 5 && autoTimer.get() >= 4.6) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 6; } if (autoState == 6 && autoTimer.get() >= 5.6) {
-		 * claw.set(Value.kReverse); // opens claw
-		 * 
-		 * autoState = 7; }
-		 * 
-		 * if (autoState == 7 && autoTimer.get() >= 6.6) {
-		 * elev.setSetpoint(PICKUP_TOTE); // lowers elevator
-		 * 
-		 * autoState = 8; } if (autoState == 8 && autoTimer.get() >= 6.9) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts tote
-		 * 
-		 * autoState = 9; } if (autoState == 9 && autoTimer.get() >= 7.9) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 10; } if (autoState == 10 && autoTimer.get() >= 9.9) {
-		 * talonLeft.set(0); talonRight.set(0); // stops moving
-		 * 
-		 * } } if (autonomous == 9) {
-		 * 
-		 * if (autoState == 0) { claw.set(Value.kReverse); // opens claw
-		 * 
-		 * autoState = 1; }
-		 * 
-		 * if (autoState == 1 && autoTimer.get() >= 0.3) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts elevator
-		 * 
-		 * autoState = 2; }
-		 * 
-		 * if (autoState == 2 && autoTimer.get() >= 1.3) { talonLeft.set(-1);
-		 * talonRight.set(-1); // moves back
-		 * 
-		 * autoState = 3; }
-		 * 
-		 * if (autoState == 3 && autoTimer.get() >= 2.3) { talonOmni.set(-1); //
-		 * moves left
-		 * 
-		 * autoState = 4; }
-		 * 
-		 * if (autoState == 4 && autoTimer.get() >= 4.3) {
-		 * claw.set(Value.kForward); //
-		 * 
-		 * autoState = 5; }
-		 * 
-		 * if (autoState == 5 && autoTimer.get() >= 4.6) { talonLeft.set(1);
-		 * talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 6; }
-		 * 
-		 * if (autoState == 6 && autoTimer.get() >= 5.6) {
-		 * claw.set(Value.kReverse);
-		 * 
-		 * autoState = 7; } if (autoState == 7 && autoTimer.get() >= 5.9) {
-		 * elev.setSetpoint(TWO_TOTE); // lifts elevator
-		 * 
-		 * autoState = 8; } if (autoState == 8 && autoTimer.get() >= 6.9) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 9; } if (autoState == 9 && autoTimer.get() >= 7.4) {
-		 * talonOmni.set(-1); // moves left to avoid bump
-		 * 
-		 * autoState = 10; } if (autoState == 10 && autoTimer.get() >= 8.4) {
-		 * talonLeft.set(1); talonRight.set(1); // moves forward
-		 * 
-		 * autoState = 11; } if (autoState == 11 && autoTimer.get() >= 9.4) {
-		 * talonLeft.set(0); talonRight.set(0); // stops moving }
-		 * 
-		 * }
-		 */
+
+		pickup();
+
+		talonOmni.set(-1);
+		Timer.delay(y);
+
+		pickup();
+
+		talonOmni.set(-1);
+		Timer.delay(y + .1); // extra timer for extra weight
+
+		pickup();
+
+		talonOmni.set(-1);
+		Timer.delay(y + .2); // extra timer for extra weight
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-		
+
 		claw.teleopPeriodic();
 
 		SmartDashboard.putNumber("Elevator Encoder", elevEncoder.get());
@@ -479,7 +252,7 @@ public class Robot extends IterativeRobot {
 			if (lastGyroState != jsRight.getRawButton(7)) {
 				gyroSetpoint = gyro.getAngle();
 			}
-			
+
 			Omni.enable();
 			Omni.setSetpoint(gyroSetpoint);
 
@@ -501,11 +274,10 @@ public class Robot extends IterativeRobot {
 			Omni.disable();
 			talonOmni.set(0);
 			omniPiston.set(OMNI_OFF);
-			talonLeft.set(jsLeft.getY()*0.75);
-			talonRight.set(jsRight.getY()*0.75);
+			talonLeft.set(jsLeft.getY() * 0.75);
+			talonRight.set(jsRight.getY() * 0.75);
 		}
-		
-		
+
 		// First tote position
 		if (jsGamepad.getRawButton(3)) {
 			brake.set(BRAKE_OFF);
@@ -592,8 +364,6 @@ public class Robot extends IterativeRobot {
 
 		// if the state
 
-
-
 		if (jsGamepad.getRawAxis(3) > 0) {
 			// Manual control for elevator
 
@@ -610,12 +380,41 @@ public class Robot extends IterativeRobot {
 				talonElev.set(0);
 				brake.set(BRAKE_ON);
 			}
-
 		}
 
 		/**
 		 * This function is called periodically during test mode
 		 */
+	}
+
+	public void pickup() {
+		int x = 1; // time from container clearance to pick up
+
+		claw.Open();
+
+		brakeON();
+
+		talonElev.set(-1);
+		Timer.delay(x);
+
+		brakeON();
+
+		claw.Close();
+
+		brakeOFF();
+
+		talonElev.set(1);
+		Timer.delay(x + .1); // extra time because we have extra weight
+
+		brakeON();
+	}
+
+	public void brakeON() {
+		brake.set(BRAKE_ON);
+	}
+
+	public void brakeOFF() {
+		brake.set(BRAKE_OFF);
 	}
 
 	public void testPeriodic() {
