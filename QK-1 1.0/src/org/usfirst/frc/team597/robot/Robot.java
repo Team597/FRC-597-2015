@@ -416,6 +416,15 @@ public class Robot extends IterativeRobot {
 	public void brakeOFF() {
 		brake.set(BRAKE_OFF);
 	}
+	
+	public void turn(){
+		Omni.enable();
+		
+		double z = gyro.getAngle() + 180;
+		
+		Omni.setSetpoint(z);
+		
+	}
 
 	public void testPeriodic() {
 
