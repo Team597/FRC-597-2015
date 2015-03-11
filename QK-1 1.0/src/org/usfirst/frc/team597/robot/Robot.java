@@ -1,7 +1,5 @@
 package org.usfirst.frc.team597.robot;
 
-import java.sql.Time;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -30,10 +28,9 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-
+	
 	Joystick jsLeft = new Joystick(0);
 	Joystick jsRight = new Joystick(1);
-	Joystick jsManualClaw = new Joystick(2);
 	Joystick jsGamepad = new Joystick(3);
 	Talon talonLeft = new Talon(0);
 	Talon talonRight = new Talon(1);
@@ -44,44 +41,39 @@ public class Robot extends IterativeRobot {
 	DoubleSolenoid omniPiston = new DoubleSolenoid(2, 5);
 	CameraServer server;
 
-	Claw claw = new Claw(jsGamepad);
-	// DigitalInput test7 = new DigitalInput(7);
-	// DigitalInput test8 = new DigitalInput(8);
-
-	// Encoder tests:
-	// L: 1597, 1587, 1586
-	// R: 2303, 2389, 2280
-	Encoder leftTalonEncoder = new Encoder(5, 6);
-	Encoder omniTalonEncoder = new Encoder(1, 2);
-	Encoder rightTalonEncoder = new Encoder(3, 4);
-	// Measured drift: 4degrees / min
 	Gyro gyro = new Gyro(0);
-	double gyroSetpoint = 0;
-	int turnRight = 0;
-	int turnLeft = 0;
-
-	OmniDrive omni_Drive = new OmniDrive(talonLeft, talonRight);
-
+	
 	Encoder elevEncoder = new Encoder(7, 8);
+	
+	OmniDrive omni_Drive = new OmniDrive(talonLeft, talonRight);
+	
 	PIDController elev = new PIDController(-1 / 100.0, 0, -.01, elevEncoder,
 			talonElev);
 	PIDController Omni = new PIDController(1 / 90.0, 0, 0, gyro, omni_Drive);
-	// PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro,
-	// talonRight);
-	DigitalInput botLimitSwitch = new DigitalInput(0);
+	//PIDController Omni2 = new PIDController(1/100, 0, -.01, gyro,
+		// talonRight);
+	
+	Claw claw = new Claw(jsGamepad, brake, talonElev, elev);
+	Drive drive = new Drive(gyro, jsLeft, jsRight, talonLeft, talonRight, talonOmni, omniPiston, Omni);
+	
+	final Value BRAKE_ON = Value.kReverse;
+	final Value BRAKE_OFF = Value.kForward;
+	
 	DigitalInput topLimitSwitch = new DigitalInput(9);
+	DigitalInput botLimitSwitch = new DigitalInput(0);
+	boolean lastBotState = false;
+	
 	int eS = 1;
 	long print = System.currentTimeMillis();
-
-	int elevState = 1;
-
-	boolean lastBotState = false;
-
-	boolean lastGyroState = false;
-
-	// Add this to every setpoint to zero it to the robot
-	// This will subtract a bunch if the encoder was zeroed to the top
-	// And be zero if it was zeroed to the bottom.
+	
+	// Encoder tests:
+	// L: 1597, 1587, 1586
+	// R: 2303, 2389, 2280
+	// Measured drift: 4degrees / min
+	Encoder leftTalonEncoder = new Encoder(5, 6);
+	Encoder omniTalonEncoder = new Encoder(1, 2);
+	Encoder rightTalonEncoder = new Encoder(3, 4);
+	
 	int ENCODER_OFFSET = 0;
 	int DIFFERENCE_TOP_BOTTOM_ENCODER = 3813;
 
@@ -92,28 +84,16 @@ public class Robot extends IterativeRobot {
 	int FOUR_TOTE = 3000;
 	int TOP_TOTE = 3800;
 
-	final Value BRAKE_ON = Value.kReverse;
-	final Value BRAKE_OFF = Value.kForward;
-
-	final Value OMNI_ON = Value.kReverse;
-	final Value OMNI_OFF = Value.kForward;
-
+	int brakeState = 0;
+	int brakeOffSet = 50;
+	
 	int autonomous = 0;
 	int maxAutonomous = 10;
 	int autoState = 0;
 	Timer autoTimer;
 
-	int brakeState = 0;
-	int brakeOffSet = 50;
-
-	int omniState = 0;
-
-	double gyroAngle = 0;
-
 	Command autonomousCommand;
 	SendableChooser autoChooser;
-
-	double omniAngle = 0;
 
 	public Robot() {
 		server = CameraServer.getInstance();
@@ -159,13 +139,10 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousPeriodic() {
 		double y = 1; // time from one tote to the next
-
-		talonLeft.set(.75);
-		talonRight.set(.75);
-		Timer.delay(1);
-		talonLeft.set(0);
-		talonRight.set(0);
-		Timer.delay(.01);
+		
+		drive.move(0.75, 1);
+		
+		drive.move(0, 0.01);
 
 		pickup();
 
@@ -189,95 +166,43 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 
 		claw.teleopPeriodic();
+		drive.teleopPeriodic();
+		drive.PRINT();
 
 		SmartDashboard.putNumber("Elevator Encoder", elevEncoder.get());
-
+		
+		// Print out for testing
 		if (System.currentTimeMillis() >= print) {
-
-			System.out.println("elevator: " + elevEncoder.get());
-			/*
-			 * System.out.println("test 7: "+test7.get());
-			 * System.out.println("test 8: "+test8.get());
-			 */
-
-			System.out.println("Bottm limit switch hit: "
+			System.out.println("Elevator: " + elevEncoder.get());
+			System.out.println("Bot LimitSwitch hit: "
 					+ botLimitSwitch.get());
-			/*
-			 * System.out.println("Top limit switch hit: " +
-			 * topLimitSwitch.get()); System.out.println("Left encoder " +
-			 * leftTalonEncoder.get()); System.out.println("Right encoder " +
-			 * rightTalonEncoder.get()); System.out.println("omni encoder" +
-			 */
-			System.out.println("Gyro angle " + gyro.getAngle());
-			System.out.println("Gyro Rate " + gyro.getRate());
-
-			System.out.println("gamepad pov: " + jsGamepad.getPOV());
+			System.out.println("Gyro Angle: " + gyro.getAngle());
+			System.out.println("Gyro Rate: " + gyro.getRate());
+			
 
 			print = System.currentTimeMillis() + 500;
 		}
 
 		if (botLimitSwitch.get() != lastBotState) {
 			int error = elevEncoder.get() + DIFFERENCE_TOP_BOTTOM_ENCODER;
-
+			
 			elevEncoder.reset();
 			ENCODER_OFFSET = 0;
 			// elev.disable();
-			System.out
-					.println("Botswitch has been RESET :) Error top vs bottom: "
-							+ error);
+			System.out.println("Elevator encoder has been RESET");
+			System.out.println("Error top vs. bot: " + error);
 		}
 		lastBotState = botLimitSwitch.get();
+		
+		// Pickup position
+		if (jsGamepad.getRawButton(2)) {
+			brake.set(BRAKE_OFF);
+			// Move elevator
+			elev.enable();
+			elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
 
-		/*
-		 * if (topLimitSwitch.get() != lastTopState) { en1.reset();
-		 * elev.disable(); ENCODER_OFFSET = -DIFFERENCE_TOP_BOTTOM_ENCODER;
-		 * System.out.println("Topswitch has been RESET :)"); } lastTopState =
-		 * topLimitSwitch.get();
-		 */
-
-		// Manual control for brake
-		/*
-		 * if (jsManualClaw.getRawButton(3)) { brake.set(BRAKE_ON); }
-		 */
-		if (jsManualClaw.getRawButton(2)) {
-			elev.disable();
-			talonElev.set(jsManualClaw.getY());
-
+			brakeState = 0;
 		}
-
-		// Enables omni(H) drive at half speed
-		SmartDashboard.putNumber("gyro angle", gyro.getAngle());
-		if (jsRight.getRawButton(7) == true) {
-			omniPiston.set(OMNI_ON);
-			if (lastGyroState != jsRight.getRawButton(7)) {
-				gyroSetpoint = gyro.getAngle();
-			}
-
-			Omni.enable();
-			Omni.setSetpoint(gyroSetpoint);
-
-			if (jsLeft.getRawButton(7)) {
-				omniState = 2;
-			} else {
-				omniState = 1;
-			}
-			if (omniState == 1) {
-				talonOmni.set(jsRight.getX() / 2);
-			}
-			if (omniState == 2) {
-				talonOmni.set(jsRight.getX());
-			}
-		}
-		lastGyroState = jsRight.getRawButton(7);
-		// Standard drive
-		if (jsRight.getRawButton(7) == false) {
-			Omni.disable();
-			talonOmni.set(0);
-			omniPiston.set(OMNI_OFF);
-			talonLeft.set(jsLeft.getY() * 0.75);
-			talonRight.set(jsRight.getY() * 0.75);
-		}
-
 		// First tote position
 		if (jsGamepad.getRawButton(3)) {
 			brake.set(BRAKE_OFF);
@@ -314,16 +239,8 @@ public class Robot extends IterativeRobot {
 
 			brakeState = 4;
 		}
-		// First pickup position
-		if (jsGamepad.getRawButton(2)) {
-			brake.set(BRAKE_OFF);
-			// Move elevator
-			elev.enable();
-			elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
-
-			brakeState = 0;
-		}
-
+		
+		// Brake check
 		if (brakeState == 1) {
 			if (elevEncoder.get() < ONE_TOTE + brakeOffSet
 					&& elevEncoder.get() > ONE_TOTE - brakeOffSet) {
@@ -354,70 +271,33 @@ public class Robot extends IterativeRobot {
 				brake.set(BRAKE_ON);
 			}
 		}
-
-		/*
-		 * 
-		 * Sixth pickup position here
-		 */
-
-		// Manual enable brakes
-
-		// if the state
-
-		if (jsGamepad.getRawAxis(3) > 0) {
-			// Manual control for elevator
-
-			if (jsGamepad.getPOV() == 180) {
-				elev.disable();
-				brake.set(BRAKE_OFF);
-				talonElev.set(0.5);
-			} else if (jsGamepad.getPOV() == 0) {
-				elev.disable();
-				brake.set(BRAKE_OFF);
-				talonElev.set(-0.5);
-
-			} else if (jsGamepad.getPOV() == -1) {
-				talonElev.set(0);
-				brake.set(BRAKE_ON);
-			}
-		}
-
+		
 		/**
 		 * This function is called periodically during test mode
 		 */
 	}
 
 	public void pickup() {
-		int x = 1; // time from container clearance to pick up
-
 		claw.Open();
-
-		brakeON();
-
-		talonElev.set(-1);
-		Timer.delay(x);
-
-		brakeON();
+		
+		brake.set(BRAKE_OFF);
+		// Move elevator
+		elev.enable();
+		elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
+		brakeState = 0;
 
 		claw.Close();
+		
+		brake.set(BRAKE_OFF);
+		// Move elevator
+		elev.enable();
+		elev.setSetpoint(THREE_TOTE + ENCODER_OFFSET);
+		brakeState = 3;
 
-		brakeOFF();
-
-		talonElev.set(1);
-		Timer.delay(x + .1); // extra time because we have extra weight
-
-		brakeON();
-	}
-
-	public void brakeON() {
 		brake.set(BRAKE_ON);
 	}
 
-	public void brakeOFF() {
-		brake.set(BRAKE_OFF);
-	}
-	
-	public void turn(){
+	public void turn180(){
 		Omni.enable();
 		
 		double z = gyro.getAngle() + 180;
