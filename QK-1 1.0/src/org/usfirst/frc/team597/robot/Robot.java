@@ -90,6 +90,7 @@ public class Robot extends IterativeRobot {
 	int autonomous = 0;
 	int maxAutonomous = 10;
 	int autoState = 0;
+	int toteFlag = 0;
 	Timer autoTimer;
 
 	Command autonomousCommand;
@@ -158,6 +159,50 @@ public class Robot extends IterativeRobot {
 
 		talonOmni.set(-1);
 		Timer.delay(y + .2); // extra timer for extra weight
+		
+		/* Autonomous with elev PID */
+		// Opens claw
+		if (autoState == 0) {
+			claw.Open();
+			
+			autoState = 1;
+		}
+		// Moves elev down to reset encoder
+		if (autoState == 1) {
+			if (botLimitSwitch.get() != false) {
+				talonElev.set(-0.3);
+			}
+			if (botLimitSwitch.get() == false) {
+				talonElev.set(0);
+				elevEncoder.reset();
+				ENCODER_OFFSET = 0;
+				
+				autoState = 2;
+			}
+		}
+		// Picks up tote
+		if (autoState == 2) {
+			pickup();
+			
+			autoState = 3;
+			toteFlag ++;
+		}
+		// Moves robot right (robot facing us)
+		if (autoState == 3) {
+			drive.strafe(0.5, 3);
+			drive.strafe(0, 0.1);
+			
+			autoState = 2;
+			
+			if (toteFlag == 3) {
+				autoState = 4;
+			}
+		}
+		// Backup into auto-zone
+		if (autoState == 4) {
+			drive.move(-0.3, 1);
+			drive.move(0, 0.1);
+		}
 	}
 
 	/**
@@ -200,7 +245,7 @@ public class Robot extends IterativeRobot {
 			// Move elevator
 			elev.enable();
 			elev.setSetpoint(PICKUP_TOTE + ENCODER_OFFSET);
-
+			// Enable brakes
 			brakeState = 0;
 		}
 		// First tote position
@@ -209,7 +254,7 @@ public class Robot extends IterativeRobot {
 			// Move elevator
 			elev.enable();
 			elev.setSetpoint(ONE_TOTE + ENCODER_OFFSET);
-
+			// Enable brakes
 			brakeState = 1;
 		}
 		// Second tote position
@@ -218,7 +263,7 @@ public class Robot extends IterativeRobot {
 			// Move elevator
 			elev.enable();
 			elev.setSetpoint(TWO_TOTE + ENCODER_OFFSET);
-
+			// Enable brakes 
 			brakeState = 2;
 		}
 		// Third tote position
@@ -227,7 +272,7 @@ public class Robot extends IterativeRobot {
 			// Move elevator
 			elev.enable();
 			elev.setSetpoint(THREE_TOTE + ENCODER_OFFSET);
-
+			// Enable brakes
 			brakeState = 3;
 		}
 		// Fourth tote position
@@ -236,11 +281,17 @@ public class Robot extends IterativeRobot {
 			// Move elevator
 			elev.enable();
 			elev.setSetpoint(FOUR_TOTE + ENCODER_OFFSET);
-
+			// Enable brakes 
 			brakeState = 4;
 		}
 		
 		// Brake check
+		if (brakeState == 0) {
+			if (elevEncoder.get() < PICKUP_TOTE + brakeOffSet
+					&& elevEncoder.get() > PICKUP_TOTE - brakeOffSet) {
+				brake.set(BRAKE_ON);
+			}
+		}
 		if (brakeState == 1) {
 			if (elevEncoder.get() < ONE_TOTE + brakeOffSet
 					&& elevEncoder.get() > ONE_TOTE - brakeOffSet) {
@@ -265,12 +316,6 @@ public class Robot extends IterativeRobot {
 				brake.set(BRAKE_ON);
 			}
 		}
-		if (brakeState == 0) {
-			if (elevEncoder.get() < PICKUP_TOTE + brakeOffSet
-					&& elevEncoder.get() > PICKUP_TOTE - brakeOffSet) {
-				brake.set(BRAKE_ON);
-			}
-		}
 		
 		/**
 		 * This function is called periodically during test mode
@@ -278,6 +323,12 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void pickup() {
+		brake.set(BRAKE_OFF);
+		// Move elevator
+		elev.enable();
+		elev.setSetpoint(TWO_TOTE + ENCODER_OFFSET);
+		brakeState = 0;
+		
 		claw.Open();
 		
 		brake.set(BRAKE_OFF);
@@ -293,8 +344,7 @@ public class Robot extends IterativeRobot {
 		elev.enable();
 		elev.setSetpoint(THREE_TOTE + ENCODER_OFFSET);
 		brakeState = 3;
-
-		brake.set(BRAKE_ON);
+		
 	}
 
 	public void turn180(){

@@ -84,5 +84,15 @@ public class Drive {
 		talonRight.set(x);
 		Timer.delay(y);
 	}
+	public void strafe(double x, double y) {
+		omniPiston.set(OMNI_ON);
+		gyroSetpoint = gyro.getAngle();
+
+		Omni.enable();
+		Omni.setSetpoint(gyroSetpoint);
+		
+		talonOmni.set(x);
+		Timer.delay(y);
+	}
 
 }
