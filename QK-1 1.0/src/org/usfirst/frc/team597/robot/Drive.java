@@ -15,10 +15,15 @@ public class Drive {
 	Talon talonStrafe;
 	DoubleSolenoid strafePiston;
 	Gyro gyro = new Gyro(0);
+	
+	Autonomous Auto;
 	StrafeComp strafeComp;
+	
 	PIDController strafePID;
 	double gyroSetpoint;
 	int mode;
+	boolean SHT = false;
+	boolean gyroPoint = false;
 
 	public Drive() {
 		jsLeft = new Joystick(0);
@@ -27,7 +32,10 @@ public class Drive {
 		talonRight = new Talon(1);
 		talonStrafe = new Talon(2);
 		strafePiston = new DoubleSolenoid(2, 7);
+
+		Auto = new Autonomous(talonLeft, talonRight, talonStrafe, strafePiston);
 		strafeComp = new StrafeComp(talonLeft, talonRight);
+		
 		strafePID = new PIDController(1 / 45.0, 0, 0, gyro, strafeComp);
 		gyroSetpoint = 0;
 		mode = 0;
@@ -39,8 +47,19 @@ public class Drive {
 			strafePiston.set(Value.kReverse);
 			talonLeft.set(jsLeft.getY());
 			talonRight.set(jsRight.getY());
-		} 
-		else if (jsRight.getRawButton(7)) {
+			if (SHT != jsRight.getRawButton(7)) {
+				talonLeft.set(0);
+				talonRight.set(0);
+				talonStrafe.set(0);
+			}
+			SHT = jsRight.getRawButton(7);
+		} else if (jsRight.getRawButton(7)) {
+			if (SHT != jsRight.getRawButton(7)) {
+				talonLeft.set(0);
+				talonRight.set(0);
+				talonStrafe.set(0);
+			}
+			SHT = jsRight.getRawButton(7);
 			strafe();
 		}
 
@@ -49,17 +68,25 @@ public class Drive {
 	public void strafe() {
 		strafePiston.set(Value.kForward);
 		compensate();
-		talonStrafe.set(jsRight.getX() / 2);
+		if (jsLeft.getRawButton(7)) {
+			talonStrafe.set(jsRight.getX() / 2);
+		}
 		if (jsLeft.getRawButton(7)) {
 			talonStrafe.set(jsRight.getX());
 		}
 	}
-
+	
+	public void autonomousPeriodic(){
+		Auto.autonoNo(1);
+	}
+	
 	public void compensate() {
-		gyroSetpoint = gyro.getAngle();
+		if (gyroPoint != jsRight.getRawButton(7)) {
+			gyroSetpoint = gyro.getAngle();
+		}
+		gyroPoint = jsRight.getRawButton(7);
 		strafePID.enable();
 		strafePID.setSetpoint(gyroSetpoint);
 	}
-	
 
 }

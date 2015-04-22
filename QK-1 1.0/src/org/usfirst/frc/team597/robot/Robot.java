@@ -10,39 +10,41 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 public class Robot extends IterativeRobot {
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-	
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+
 	Drive drive = new Drive();
 	Claw claw = new Claw();
-	
-    public void robotInit() {
 
-    }
+	public void robotInit() {
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
+	}
 
-    }
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	public void autonomousPeriodic() {
 
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-    	drive.tankDrive();
-        claw.teleopPeriodic();
-        claw.clawControl();
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-    
-    }
-    
+		drive.autonomousPeriodic();
+
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	public void teleopPeriodic() {
+		drive.tankDrive();
+		claw.teleopPeriodic();
+		claw.clawControl();
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	public void testPeriodic() {
+
+	}
+
 }
