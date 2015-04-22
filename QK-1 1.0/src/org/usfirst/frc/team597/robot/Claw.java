@@ -1,82 +1,75 @@
 package org.usfirst.frc.team597.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Claw {
-
-	DoubleSolenoid claw;
-	Joystick jsGamepad;
-	DoubleSolenoid brake;
+	Joystick jsClaw;
 	Talon talonElev;
-	PIDController elev;
-	
-	boolean toggleButton = false;
-	boolean toggleClaw = false;
-	
-	final Value BRAKE_ON = Value.kReverse;
-	final Value BRAKE_OFF = Value.kForward;
-	final Value CLAW_CLOSE = Value.kForward;
-	final Value CLAW_OPEN = Value.kReverse;
+	DoubleSolenoid claw;
 
-	public Claw(Joystick js, DoubleSolenoid b, Talon te, PIDController e) {
+	boolean toggleClaw = false;
+	boolean toggleButton = false;
+	boolean toggleButton1 = false;
+	boolean toggleButton2 = false;
+	boolean toggleButton3 = false;
+	String clawState = "Close";
+
+	public Claw() {
+
+		jsClaw = new Joystick(2);
+		talonElev = new Talon(3);
 		claw = new DoubleSolenoid(1, 6);
-		jsGamepad = js;
-		brake = b;
-		talonElev = te;
-		elev = e;
+
 	}
 
 	public void teleopPeriodic() {
-		// Toggle Button
-		if (toggleButton != jsGamepad.getRawButton(5)
-				&& jsGamepad.getRawButton(5) == true) {
+		
+		SmartDashboard.putString("Claw State: ", clawState);
+		
+		if (jsClaw.getRawButton(1) == true) {
+			talonElev.set(jsClaw.getY());
+		} else {
+			talonElev.set(0);
+		}
+
+		if (toggleButton != jsClaw.getRawButton(6)
+				&& jsClaw.getRawButton(6) == true) {
 			toggleClaw = !toggleClaw;
 		}
-		toggleButton = jsGamepad.getRawButton(5);
+		toggleButton = jsClaw.getRawButton(6);
 
+		if (toggleButton1 != jsClaw.getRawButton(7)
+				&& jsClaw.getRawButton(7) == true) {
+			toggleClaw = !toggleClaw;
+		}
+		toggleButton1 = jsClaw.getRawButton(7);
+
+		if (toggleButton2 != jsClaw.getRawButton(10)
+				&& jsClaw.getRawButton(10) == true) {
+			toggleClaw = !toggleClaw;
+		}
+		toggleButton2 = jsClaw.getRawButton(10);
+
+		if (toggleButton3 != jsClaw.getRawButton(11)
+				&& jsClaw.getRawButton(11) == true) {
+			toggleClaw = !toggleClaw;
+		}
+		toggleButton3 = jsClaw.getRawButton(11);
+
+	}
+
+	public void clawControl() {
 		if (toggleClaw == false) {
-			claw.set(CLAW_CLOSE);
+			clawState = "Close";
+			claw.set(Value.kForward);
+		} else if (toggleClaw == true) {
+			clawState = "Open";
+			claw.set(Value.kReverse);
 		}
-		if (toggleClaw == true) {
-			claw.set(CLAW_OPEN);
-		}
 
-		/*
-		 * Manee's version of toggle button if (toggleButton !=
-		 * jsGamepad.getRawButton(5)) { toggleClaw = !toggleClaw; } if
-		 * (toggleClaw == false) { claw.set(CLAW_CLOSE); } if (toggleClaw ==
-		 * true) { claw.set(CLAW_OPEN); }
-		 */
-
-		// Manual Control for Elevator
-		if (jsGamepad.getRawAxis(3) > 0) {
-			if (jsGamepad.getPOV() == 180) {
-				elev.disable();
-				brake.set(BRAKE_OFF);
-				talonElev.set(0.5);
-			} else if (jsGamepad.getPOV() == 0) {
-				elev.disable();
-				brake.set(BRAKE_OFF);
-				talonElev.set(-0.5);
-
-			} else if (jsGamepad.getPOV() == -1) {
-				talonElev.set(0);
-				brake.set(BRAKE_ON);
-			}
-		}
-		
 	}
-
-	public void Open() {
-		claw.set(CLAW_OPEN);
-	}
-
-	public void Close() {
-		claw.set(CLAW_CLOSE);
-	}
-
 }
